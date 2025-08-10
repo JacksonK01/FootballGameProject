@@ -8,7 +8,7 @@
 
 class TestScene : public Scene {
 public:
-    void tick(double dt) {
+    void tick(double dt) override {
         //Vertical Movement
         if (isKeyPressed(sf::Keyboard::Key::W)) {
             this->y -= this->speed;
@@ -26,7 +26,7 @@ public:
         }
     };
 
-    void render(double dt, sf::RenderWindow& window) {
+    void render(double dt, sf::RenderWindow& window) override {
         sf::RectangleShape entityRender(sf::Vector2f(100.0f, 100.0f));
         entityRender.setFillColor(sf::Color::White);
         entityRender.setPosition(sf::Vector2f(x, y));
@@ -34,7 +34,7 @@ public:
         window.draw(entityRender);
     };
 
-    void onMouseClickEvent(Vector2D pos) {
+    void onMouseClickEvent(Vector2D pos) override {
         this->x = pos.getX();
         this->y = pos.getY();
     };
