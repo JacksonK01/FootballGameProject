@@ -8,6 +8,8 @@
 
 class TestScene : public Scene {
 public:
+    TestScene(sf::RenderWindow& window): Scene(window) {} ;
+
     void tick(double dt) override {
         //Vertical Movement
         if (isKeyPressed(sf::Keyboard::Key::W)) {
@@ -32,11 +34,6 @@ public:
         entityRender.setPosition(sf::Vector2f(x, y));
 
         window.draw(entityRender);
-    };
-
-    void onMouseClickEvent(Vector2D pos) override {
-        this->x = pos.getX();
-        this->y = pos.getY();
     };
 
 private:

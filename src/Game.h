@@ -10,12 +10,13 @@
 
 #include "scene/Scene.h"
 #include "scene/TestScene.h"
+#include "scene/football/FootballScene.h"
 
 class Game {
 public:
     Game() :
     window(sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "Game")) {
-        currentScene = new TestScene();
+        currentScene = new FootballScene(window);
     }
 
     void run() {
@@ -42,12 +43,6 @@ public:
             currentScene->tick(deltaTime);
             //Render Logic
             currentScene->render(deltaTime, window);
-
-            //TODO replace this with better solution
-            if (isButtonPressed(sf::Mouse::Button::Left)) {
-                const sf::Vector2i mousePos = sf::Mouse::getPosition(this->window);
-                currentScene->onMouseClickEvent(Vector2D(mousePos.x, mousePos.y));
-            }
 
             window.display();
         }
