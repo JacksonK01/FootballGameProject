@@ -5,6 +5,7 @@
 #include <ostream>
 #include <stdexcept>
 
+//Credit: ChatGTP generated this for me
 class Vector2D {
 private:
     double x;

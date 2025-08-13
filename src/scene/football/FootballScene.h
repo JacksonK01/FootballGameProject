@@ -36,7 +36,7 @@ public:
             player1.onMouseClicked(Vector2D(mousePos.x, mousePos.y));
         });
 
-        player1.setLinkedEntity(field.getTeam1().getDepthChart().getStartingQB());
+        player1.setLinkedEntity(field.getTeamOffense().getDepthChart().getStartingQB());
     };
 
     void tick(double dt) override {
@@ -47,6 +47,10 @@ public:
     void render(double dt, sf::RenderWindow& window) override {
         field.render(dt, window);
     }
+
+    void mousePressed(sf::Mouse::Button button, const Vector2D &pos) override {
+        inputManager.onMousePressed(button);
+    };
 
 private:
     EventBus eventBus;

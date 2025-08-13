@@ -6,7 +6,6 @@
 #define QBENTITY_H
 #include "../PositionEntity.h"
 #include "../../../../../util/Logger.h"
-#include "../../objects/FootballEntity.h"
 #include "SFML/Graphics/Texture.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
 
@@ -18,26 +17,37 @@ public:
         if (!texture.loadFromFile("../assets/entity/QB.png")) {
             Logger::error("QB unable to load texture", typeid(*this));
         }
+
+        //placeholder value for now.
+        this->rating.speed = 5;
+        this->rating.throwPower = 100;
     } ;
 
     void render(double dt, sf::RenderWindow &window) override {
-        sf::RectangleShape qb = sf::RectangleShape(sf::Vector2f(200.0f, 200.0f));
+        sf::RectangleShape qb = sf::RectangleShape(sf::Vector2f(100.0f, 100.0f));
+        qb.setPosition(sf::Vector2f(x, y));
         qb.setTexture(&texture);
 
         window.draw(qb);
     }
 
+    //Possibly remove and replace with a reflection based system to find position
     const std::string getPositionAbbreviation() override {
         return "QB";
     };
 
-    void onMouseClicked(const Vector2D pos) override {
-        ThrownPassEvent event = ThrownPassEvent(*this, pos);
-        emitter.emit(event);
+    void onMouseClicked(const Vector2D& pos) override {
+        if (doesHaveFootball()) {
+            ThrownPassEvent event = ThrownPassEvent(*this, pos);
+            emitter.emit(event);
+        } else {
+            Logger::warn("Attempted to throw a pass without a football", typeid(*this));
+        }
     };
 
-    void onDirectionalInput(const Vector2D direction) override {
-
+    void onDirectionalInput(const Vector2D& direction) override {
+        this->x += direction.getX() * this->rating.speed;
+        this->y += direction.getY() * this->rating.speed;
     };
 
 private:

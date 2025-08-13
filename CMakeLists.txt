@@ -33,7 +33,8 @@ add_executable(FootballGameProject
         src/event/EventBus.h
         src/util/Demangler.h
         src/event/Emitter.h
-        src/event/events/ThrownPassEvent.h
+        src/event/events/football/entity/ThrownPassEvent.h
+        src/event/events/football/entity/FootballHitGroundEvent.h
 )
 
 target_link_libraries(FootballGameProject PRIVATE sfml-graphics)

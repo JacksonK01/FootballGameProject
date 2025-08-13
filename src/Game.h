@@ -15,7 +15,8 @@
 class Game {
 public:
     Game() :
-    window(sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "Game")) {
+    window(sf::RenderWindow(sf::VideoMode({1280u, 720u}), "Football!!")) {
+        window.setKeyRepeatEnabled(false);
         currentScene = new FootballScene(window);
     }
 
@@ -27,6 +28,7 @@ public:
         while (window.isOpen()) {
             float deltaTime = clock.restart().asSeconds();
 
+
             while (const std::optional event = window.pollEvent())
             {
                 if (event->is<sf::Event::Closed>())
@@ -35,7 +37,15 @@ public:
                     // Could be useful for saving data before exiting the game
                     window.close();
                 }
+
+                //Will probably need to switch how input system works, see documentation here:
+                //https://www.sfml-dev.org/tutorials/3.0/window/events/#the-keypressed-and-keyreleased-events
+                if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
+                {
+                    currentScene->mousePressed(mouseButtonPressed->button, Vector2D(mouseButtonPressed->position.x, mouseButtonPressed->position.y));
+                }
             }
+
 
             window.clear();
 

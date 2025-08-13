@@ -11,7 +11,7 @@
 class Scene {
 public:
     virtual ~Scene() = default;
-    Scene(sf::RenderWindow& window) {};
+    Scene(sf::RenderWindow& window) : inputManager() {};
 
     //Abstract method with default implementation
     virtual void tick(double dt) {
@@ -20,9 +20,10 @@ public:
 
     //Abstract Methods, forces an inherter to have it's own implementation.
     virtual void render(double dt, sf::RenderWindow& window) = 0;
+    virtual void mousePressed(sf::Mouse::Button button, const Vector2D& pos) = 0;
 protected:
     //Each scene has it's own set of inputs. Done for simplicity.
-    InputManager inputManager = InputManager();
+    InputManager inputManager;
 };
 
 #endif //SCENE_H

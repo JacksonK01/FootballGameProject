@@ -36,6 +36,11 @@ public:
         window.draw(entityRender);
     };
 
+    void mousePressed(sf::Mouse::Button button, const Vector2D &pos) override {
+        this->x = pos.getX();
+        this->y = pos.getY();
+    };
+
 private:
     //Test player
     int x = 0;

@@ -6,6 +6,7 @@
 #define INPUTMANAGER_H
 #include <vector>
 #include <functional>
+#include <map>
 
 #include "SFML/Window/Keyboard.hpp"
 #include "SFML/Window/Mouse.hpp"
@@ -32,7 +33,7 @@ public:
             }
         };
 
-        keyPressedEvents.emplace_back(event);
+        mousePressedEvents[button] = event;
     }
 
     void tick() {
@@ -41,8 +42,20 @@ public:
         });
     };
 
+    void onMousePressed(sf::Mouse::Button button) {
+        for (const auto& pair : mousePressedEvents) {
+            auto& butt = pair.first;
+            auto& event = pair.second;
+
+            if (butt == button) {
+                event();
+            }
+        }
+    }
+
 private:
     std::vector<std::function<void()>> keyPressedEvents;
+    std::map<sf::Mouse::Button, std::function<void()>> mousePressedEvents;
 };
 
 
