@@ -14,8 +14,6 @@
 //Possibly should house interaction logic between players? Will decide later.
 class FootballField {
 public:
-
-
     explicit FootballField(EventBus& eventBus): eventBus(eventBus), team1(eventBus), team2(eventBus) {
         std::string errorMessage = "Unable to load tile texture for field";
         std::string prefix = "../assets/texture/tile/";

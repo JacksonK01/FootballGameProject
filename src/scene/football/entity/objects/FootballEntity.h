@@ -45,7 +45,7 @@ public:
                 Vector2D direction = directDestination.normalize();
 
                 int speedScale = 10.0;
-                int step = velocity.length() * speedScale * dt;
+                double step = velocity.length() * speedScale * dt;
 
                 x += direction.getX() * step;
                 y += direction.getY() * step;
@@ -103,6 +103,7 @@ public:
 private:
     double z = 0;
 
+    //TODO fix magic numbers here
     //Starts at -1 for default value.
     //Cached once, gets the total throw distance
     double distanceCache = -1;

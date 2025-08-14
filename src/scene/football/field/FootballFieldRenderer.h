@@ -9,6 +9,7 @@
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Graphics/Texture.hpp"
 
+//Has no use yet.
 class FootballFieldRenderer {
     FootballFieldRenderer(FootballField& field) : field(field) {
         std::string errorMessage = "Unable to load tile texture for field";
