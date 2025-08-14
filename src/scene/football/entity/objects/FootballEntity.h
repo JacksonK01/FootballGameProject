@@ -7,7 +7,6 @@
 #include "../Entity.h"
 #include "../../../../util/Logger.h"
 #include "../../../../util/math/Vector2D.h"
-#include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/Texture.hpp"
 
 //Will be used to represent the actual football itself in game.
@@ -31,7 +30,7 @@ public:
                 distanceCache = directDestination.length();
             }
 
-            double range = 10;
+            double range = 15;
             if (directDestination.length() <= range) {
                 //TODO gotta add a state machine to avoid code like this.
                 isGrounded = true;
@@ -68,11 +67,13 @@ public:
             return;
         }
 
-        float size = 75.f;
-        sf::RectangleShape ball = sf::RectangleShape(sf::Vector2f(size, size));
+        //texture size
+        float size = 16.f;
+        sf::Sprite ball(texture);
         ball.setOrigin(sf::Vector2f(0.f, size / 2));
         ball.setPosition(sf::Vector2f(x, y - z));
-        ball.setTexture(&texture);
+
+        ball.scale(sf::Vector2f(2.f, 2.f));
 
         window.draw(ball);
     };

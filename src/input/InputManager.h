@@ -8,6 +8,7 @@
 #include <functional>
 #include <map>
 
+#include "../util/math/Vector2D.h"
 #include "SFML/Window/Keyboard.hpp"
 #include "SFML/Window/Mouse.hpp"
 
@@ -26,10 +27,10 @@ public:
         keyPressedEvents.emplace_back(event);
     }
 
-    void createMouseButtonEvent(sf::Mouse::Button button, const std::function<void()>& action) {
-        auto event = [button, action]() {
+    void createMouseButtonEvent(sf::Mouse::Button button, const std::function<void(const Vector2D& pos)>& action) {
+        auto event = [button, action](const Vector2D& pos) {
             if (isButtonPressed(button)) {
-                action();
+                action(pos);
             }
         };
 
@@ -42,20 +43,20 @@ public:
         });
     };
 
-    void onMousePressed(sf::Mouse::Button button) {
+    void onMousePressed(sf::Mouse::Button button, const Vector2D& pos) {
         for (const auto& pair : mousePressedEvents) {
             auto& butt = pair.first;
             auto& event = pair.second;
 
             if (butt == button) {
-                event();
+                event(pos);
             }
         }
     }
 
 private:
     std::vector<std::function<void()>> keyPressedEvents;
-    std::map<sf::Mouse::Button, std::function<void()>> mousePressedEvents;
+    std::map<sf::Mouse::Button, std::function<void(const Vector2D& pos)>> mousePressedEvents;
 };
 
 

@@ -31,9 +31,9 @@ public:
             player1.directionalInput(Vector2D(1, 0));
         });
 
-        inputManager.createMouseButtonEvent(sf::Mouse::Button::Left, [this, &window]() {
-            const sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            player1.onMouseClicked(Vector2D(mousePos.x, mousePos.y));
+        inputManager.createMouseButtonEvent(sf::Mouse::Button::Left, [this, &window](const Vector2D& pos) {
+            //const sf::Vector2i mousePos = sf::Mouse::getPosition(window.);
+            player1.onMouseClicked(pos);
         });
 
         player1.setLinkedEntity(field.getTeamOffense().getDepthChart().getStartingQB());
@@ -48,8 +48,8 @@ public:
         field.render(dt, window);
     }
 
-    void mousePressed(sf::Mouse::Button button, const Vector2D &pos) override {
-        inputManager.onMousePressed(button);
+    void mousePressed(sf::Mouse::Button button, const Vector2D& pos) override {
+        inputManager.onMousePressed(button, pos);
     };
 
 private:

@@ -14,6 +14,9 @@
 
 class Game {
 public:
+    //This enables a debug camera
+    static constexpr bool IS_DEBUG_MODE = false;
+
     Game() :
     window(sf::RenderWindow(sf::VideoMode({1280u, 720u}), "Football!!")) {
         window.setKeyRepeatEnabled(false);
@@ -49,6 +52,10 @@ public:
 
             window.clear();
 
+            if (IS_DEBUG_MODE) {
+                debugCamera();
+            }
+
             //Game Logic
             currentScene->tick(deltaTime);
             //Render Logic
@@ -61,6 +68,29 @@ public:
 private:
     sf::RenderWindow window;
     Scene* currentScene;
+
+    int debugX = 0;
+    int debugY = 0;
+    int debugSpeed = 6;
+
+    void debugCamera() {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
+            debugY -= debugSpeed;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) {
+            debugY += debugSpeed;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
+            debugX += debugSpeed;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
+            debugX -= debugSpeed;
+        }
+
+        //TODO this is just for testing. Don't leave this in here long term.
+        sf::View testing = sf::View(sf::Vector2f(debugX, debugY), sf::Vector2f(1280.f, 720.f));
+        window.setView(testing);
+    }
 };
 
 #endif //GAME_H

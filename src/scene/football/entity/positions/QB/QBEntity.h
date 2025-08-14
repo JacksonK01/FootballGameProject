@@ -24,9 +24,9 @@ public:
     } ;
 
     void render(double dt, sf::RenderWindow &window) override {
-        sf::RectangleShape qb = sf::RectangleShape(sf::Vector2f(100.0f, 100.0f));
+        sf::Sprite qb(texture);
         qb.setPosition(sf::Vector2f(x, y));
-        qb.setTexture(&texture);
+        qb.scale(sf::Vector2f(3.f, 3.f));
 
         window.draw(qb);
     }
