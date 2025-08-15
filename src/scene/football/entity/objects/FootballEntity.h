@@ -8,6 +8,8 @@
 #include "../../../../util/Logger.h"
 #include "../../../../util/math/Vector2D.h"
 #include "SFML/Graphics/Texture.hpp"
+#include "SFML/Graphics/Sprite.hpp"
+
 
 //Will be used to represent the actual football itself in game.
 //A football's state will modify during a play and be reset once a play is over and the game moves to the next.

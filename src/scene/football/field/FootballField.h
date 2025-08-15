@@ -4,7 +4,6 @@
 
 #ifndef FOOTBALLFIELD_H
 #define FOOTBALLFIELD_H
-#include "Yard.h"
 #include "../../../event/events/football/entity/FootballHitGroundEvent.h"
 #include "../../../event/events/football/entity/ThrownPassEvent.h"
 #include "../team/Team.h"
@@ -14,6 +13,19 @@
 //Possibly should house interaction logic between players? Will decide later.
 class FootballField {
 public:
+    static constexpr int PIXEL_PER_YARD = 16;
+
+    static constexpr int FIELD_LENGTH_YARDS = 100;
+    static constexpr int FIELD_WIDTH_YARDS = 53;
+    static constexpr int ENDZONE_DEPTH_YARDS = 10;
+    static constexpr int ENTIRE_LENGTH_OF_FIELD = FIELD_LENGTH_YARDS + 2 * ENDZONE_DEPTH_YARDS;
+
+    static constexpr int PLAYING_FIELD_LENGTH_PX = FIELD_LENGTH_YARDS * PIXEL_PER_YARD;
+    static constexpr int ENDZONE_DEPTH_PX = ENDZONE_DEPTH_YARDS * PIXEL_PER_YARD;
+    static constexpr int ENTIRE_LENGTH_OF_FIELD_PX = ENTIRE_LENGTH_OF_FIELD * PIXEL_PER_YARD;
+    static constexpr int FIELD_WIDTH_PX = FIELD_WIDTH_YARDS * PIXEL_PER_YARD;
+
+
     explicit FootballField(EventBus& eventBus): eventBus(eventBus), team1(eventBus), team2(eventBus) {
         std::string errorMessage = "Unable to load tile texture for field";
         std::string prefix = "../assets/texture/tile/";
@@ -27,18 +39,9 @@ public:
         }
 
         registerEvents(eventBus);
-        //Checks if texture does not load
-        //Dev art :((
-        //This field is put in place to put a loose idea on how the game's camera will look.
-        // if (!texture.loadFromFile("../assets/field/Field.png")) {
-        //     Logger::error("Field unable to load texture", typeid(*this));
-        // }
 
         football.isVisible(false);
         getTeamOffense().getDepthChart().getStartingQB()->giveFootball(&football);
-
-
-
     };
 
     void tick(double dt) {
@@ -52,10 +55,7 @@ public:
     };
 
     void render(double dt, sf::RenderWindow& window) {
-        // sf::RectangleShape field = sf::RectangleShape(sf::Vector2f(window.getSize()));
-        // field.setTexture(&texture);
-        // window.draw(field);
-        renderField(dt, window);
+        renderGrassLayer(dt, window);
 
         team1.getDepthChart().getStartingQB()->render(dt, window);
         football.render(dt, window);
@@ -63,6 +63,8 @@ public:
 
     //TODO this will need to be replaced with getTeamOffense and getTeamDefense.
     Team& getTeamOffense() { return team1; }
+
+    Vector2D getPos() const { return Vector2D(this->x, this->y); }
 
 private:
     EventBus& eventBus;
@@ -72,30 +74,11 @@ private:
 
     sf::Texture texture;
 
+    double x = 0;
+    double y = 0;
 
-    //These next few variables are for doing the nitty gritty of calculating the field.
-    int x = 0;
-    int y = 0;
-
-    //100 Yards long
-    Yard horizontalDistance = Yard(this->x, this->y, 100);
-    Yard verticalDistance = Yard(this->x, this->y, 53);
     sf::Texture grass;
     sf::Texture boundary;
-
-    void renderField(double dt, sf::RenderWindow& window) {
-        for (int x = this->x; x < horizontalDistance.getAmountOfYards(); x++) {
-            for (int y = this->y; y < verticalDistance.getAmountOfYards(); y++) {
-                sf::Sprite gSprite(grass);
-
-                int scale = Yard::PIXEL_PER_YARD;
-
-                gSprite.scale(sf::Vector2f(2.f, 2.f));
-                gSprite.setPosition(sf::Vector2f(x * scale, y * scale));
-                window.draw(gSprite);
-            }
-        }
-    }
 
 
     //Using this in a lambda capture gives a POINTER of the object. Feels like pointers have no standard in C++, imo should be able to do
@@ -135,6 +118,24 @@ private:
 
         });
 
+    }
+
+    void renderGrassLayer(double dt, sf::RenderWindow& window) {
+        double x = this->getPos().getX();
+        double y = this->getPos().getY();
+
+        //TODO move these out of the loop and scale the texture before game runs.
+        sf::Sprite gSprite(grass);
+        int spriteX = gSprite.getTextureRect().size.x;
+        int spriteY = gSprite.getTextureRect().size.y;
+        gSprite.setScale(sf::Vector2f(PIXEL_PER_YARD / spriteX, PIXEL_PER_YARD / spriteY));
+
+        for (int dx = x; dx < FIELD_LENGTH_YARDS; dx++) {
+            for (int dy = y; dy < FIELD_WIDTH_YARDS; dy++) {
+                gSprite.setPosition(sf::Vector2f(dx * PIXEL_PER_YARD, dy * PIXEL_PER_YARD));
+                window.draw(gSprite);
+            }
+        }
     }
 };
 
