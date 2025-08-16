@@ -14,7 +14,7 @@
 //Add events to prevent too much cross object coupling.
 class FootballScene : public Scene {
 public:
-    FootballScene(sf::RenderWindow& window) : Scene(window), eventBus(), field(eventBus), player1(nullptr) {
+    explicit FootballScene(sf::RenderWindow& window) : Scene(window), eventBus(), field(eventBus), player1(nullptr) {
         inputManager.createKeyPressedEvent(sf::Keyboard::Key::W, [this]() {
             player1.directionalInput(Vector2D(0, -1));
         });

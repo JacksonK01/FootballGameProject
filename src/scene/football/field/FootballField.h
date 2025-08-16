@@ -17,11 +17,11 @@ public:
 
     static constexpr int FIELD_LENGTH_YARDS = 100;
     static constexpr int FIELD_WIDTH_YARDS = 53;
-    static constexpr int ENDZONE_DEPTH_YARDS = 10;
-    static constexpr int ENTIRE_LENGTH_OF_FIELD = FIELD_LENGTH_YARDS + 2 * ENDZONE_DEPTH_YARDS;
+    static constexpr int YARDS_FOR_FIRST = 10;
+    static constexpr int ENTIRE_LENGTH_OF_FIELD = FIELD_LENGTH_YARDS + 2 * YARDS_FOR_FIRST;
 
     static constexpr int PLAYING_FIELD_LENGTH_PX = FIELD_LENGTH_YARDS * PIXEL_PER_YARD;
-    static constexpr int ENDZONE_DEPTH_PX = ENDZONE_DEPTH_YARDS * PIXEL_PER_YARD;
+    static constexpr int ENDZONE_DEPTH_PX = YARDS_FOR_FIRST * PIXEL_PER_YARD;
     static constexpr int ENTIRE_LENGTH_OF_FIELD_PX = ENTIRE_LENGTH_OF_FIELD * PIXEL_PER_YARD;
     static constexpr int FIELD_WIDTH_PX = FIELD_WIDTH_YARDS * PIXEL_PER_YARD;
 
@@ -56,6 +56,7 @@ public:
 
     void render(double dt, sf::RenderWindow& window) {
         renderGrassLayer(dt, window);
+        renderBoundariesLayer(dt, window);
 
         team1.getDepthChart().getStartingQB()->render(dt, window);
         football.render(dt, window);
@@ -130,11 +131,39 @@ private:
         int spriteY = gSprite.getTextureRect().size.y;
         gSprite.setScale(sf::Vector2f(PIXEL_PER_YARD / spriteX, PIXEL_PER_YARD / spriteY));
 
-        for (int dx = x; dx < FIELD_LENGTH_YARDS; dx++) {
+        //Drass grass on every inch of the field there should be some
+        for (int dx = x; dx < ENTIRE_LENGTH_OF_FIELD; dx++) {
             for (int dy = y; dy < FIELD_WIDTH_YARDS; dy++) {
                 gSprite.setPosition(sf::Vector2f(dx * PIXEL_PER_YARD, dy * PIXEL_PER_YARD));
                 window.draw(gSprite);
             }
+        }
+    }
+
+    void renderBoundariesLayer(double dt, sf::RenderWindow& window) {
+        double x = this->getPos().getX();
+        double y = this->getPos().getY();
+
+        //TODO move these out of the loop and scale the texture before game runs.
+        sf::Sprite bSprite(boundary);
+        int spriteX = bSprite.getTextureRect().size.x;
+        int spriteY = bSprite.getTextureRect().size.y;
+        bSprite.setScale(sf::Vector2f(PIXEL_PER_YARD / spriteX, PIXEL_PER_YARD / spriteY));
+
+        for (int dx = x; dx < ENTIRE_LENGTH_OF_FIELD + 1; dx++) {
+
+            //TODO check if the dy should increment to FieldWidth + 2. It might be shrinking the field on accident here.
+            for (int dy = y; dy < FIELD_WIDTH_YARDS; dy++) {
+                //This condition is for the top and bottom lines of the field, making sure they get rendered.
+                if (dy == y || dy == FIELD_WIDTH_YARDS - 1) {
+                    bSprite.setPosition(sf::Vector2f(dx * PIXEL_PER_YARD, dy * PIXEL_PER_YARD));
+                    window.draw(bSprite);
+                } else if (dx % YARDS_FOR_FIRST == 0) {
+                    bSprite.setPosition(sf::Vector2f(dx * PIXEL_PER_YARD, dy * PIXEL_PER_YARD));
+                    window.draw(bSprite);
+                }
+            }
+
         }
     }
 };

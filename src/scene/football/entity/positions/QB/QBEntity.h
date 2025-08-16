@@ -20,7 +20,7 @@ public:
 
         //placeholder value for now.
         this->rating.speed = 5;
-        this->rating.throwPower = 100;
+        this->rating.throwPower = 50;
     } ;
 
     void render(double dt, sf::RenderWindow &window) override {
