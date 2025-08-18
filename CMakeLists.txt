@@ -38,6 +38,8 @@ add_executable(FootballGameProject
         src/scene/football/state/StateMachine.h
         src/scene/football/state/IState.h
         src/scene/football/state/generic/IdleState.h
+        src/scene/football/team/playcalling/Play.h
+        src/scene/football/team/playcalling/Formation.h
 )
 
 target_link_libraries(FootballGameProject PRIVATE sfml-graphics)
