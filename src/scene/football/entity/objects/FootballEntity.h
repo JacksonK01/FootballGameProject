@@ -78,6 +78,10 @@ public:
         ball.scale(sf::Vector2f(2.f, 2.f));
 
         window.draw(ball);
+
+        if (Config::IS_DEBUG_MODE) {
+            destination.render(window, {x, y});
+        }
     };
 
     void isVisible(const bool&& shouldRender) { this->shouldRender = shouldRender; }

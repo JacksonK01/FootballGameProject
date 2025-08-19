@@ -8,17 +8,18 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
+#include "config/Config.h"
 #include "scene/Scene.h"
 #include "scene/TestScene.h"
 #include "scene/football/FootballScene.h"
 
 class Game {
 public:
-    //This enables a debug camera
-    static constexpr bool IS_DEBUG_MODE = false;
+    static constexpr int WINDOW_WIDTH = 1280u;
+    static constexpr int WINDOW_HEIGHT = 720u;
 
     Game() :
-    window(sf::RenderWindow(sf::VideoMode({1280u, 720u}), "Football!!")) {
+    window(sf::RenderWindow(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Football!!")) {
         window.setKeyRepeatEnabled(false);
         currentScene = new FootballScene(window);
     }
@@ -45,21 +46,25 @@ public:
                 //https://www.sfml-dev.org/tutorials/3.0/window/events/#the-keypressed-and-keyreleased-events
                 if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
                 {
-                    currentScene->mousePressed(mouseButtonPressed->button, Vector2D(mouseButtonPressed->position.x, mouseButtonPressed->position.y));
+                    auto pos = Vector2D(mouseButtonPressed->position.x + debugX, mouseButtonPressed->position.y + debugY);
+                    std::string out = "Mouse X: " + std::to_string(pos.getX()) + " Mouse Y: " + std::to_string(pos.getY());
+
+                    Logger::log(out, typeid(*this));
+                    currentScene->mousePressed(mouseButtonPressed->button, pos);
                 }
             }
 
 
             window.clear();
 
-            if (IS_DEBUG_MODE) {
-                debugCamera();
-            }
-
             //Game Logic
             currentScene->tick(deltaTime);
             //Render Logic
             currentScene->render(deltaTime, window);
+
+            if (Config::IS_DEBUG_MODE) {
+                debugCamera();
+            }
 
             window.display();
         }
@@ -69,9 +74,9 @@ private:
     sf::RenderWindow window;
     Scene* currentScene;
 
-    int debugX = 0;
-    int debugY = 0;
-    int debugSpeed = 6;
+    double debugX = 0;
+    double debugY = 0;
+    double debugSpeed = 6;
 
     void debugCamera() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
@@ -88,7 +93,7 @@ private:
         }
 
         //TODO this is just for testing. Don't leave this in here long term.
-        sf::View testing = sf::View(sf::Vector2f(debugX, debugY), sf::Vector2f(1280.f, 720.f));
+        sf::View testing = sf::View(sf::FloatRect(sf::Vector2<float>(debugX, debugY), sf::Vector2<float>(WINDOW_WIDTH, WINDOW_HEIGHT)));
         window.setView(testing);
     }
 };

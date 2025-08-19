@@ -4,15 +4,18 @@
 
 #ifndef STATEMACHINE_H
 #define STATEMACHINE_H
+#include <memory>
+
 #include "IState.h"
 #include "generic/IdleState.h"
 
+//Probably won't need
 template<typename T>
 class StateMachine {
     virtual ~StateMachine() = default;
 
     explicit StateMachine(T& owner) : owner(owner), currentState(nullptr) {
-        currentState = new IdleState();
+        currentState = std::make_unique<IdleState>();
     }
 
     void changeState(IState* state) {
@@ -21,7 +24,7 @@ class StateMachine {
             delete currentState;
         }
 
-        currentState = state;
+        currentState = std::unique_ptr<IState>(state);
         currentState->onEnter();
     }
 
@@ -33,7 +36,7 @@ class StateMachine {
 
 private:
     T& owner;
-    IState* currentState;
+    std::unique_ptr<IState> currentState;
 };
 
 #endif //STATEMACHINE_H

@@ -22,7 +22,6 @@ add_executable(FootballGameProject
         src/scene/football/entity/positions/PositionEntity.h
         src/scene/football/controller/Controller.h
         src/scene/football/field/FootballField.h
-        src/scene/football/entity/positions/QB/QBEntity.h
         src/scene/football/controller/ControllerManager.h
         src/scene/football/team/Team.h
         src/scene/football/team/DepthChart.h
@@ -38,8 +37,18 @@ add_executable(FootballGameProject
         src/scene/football/state/StateMachine.h
         src/scene/football/state/IState.h
         src/scene/football/state/generic/IdleState.h
+        src/scene/football/field/FieldState.h
+        src/scene/football/util/Position.h
+        src/scene/football/util/Util.h
+        src/config/Config.h
+        src/scene/football/team/playcalling/Play.cpp
         src/scene/football/team/playcalling/Play.h
+        src/scene/football/team/playcalling/Formation.cpp
         src/scene/football/team/playcalling/Formation.h
+        src/scene/football/team/playcalling/FormationSlot.h
+        src/scene/football/util/FormationType.h
+        src/scene/football/camera/Camera.h
+        src/scene/football/field/FieldConstants.h
 )
 
 target_link_libraries(FootballGameProject PRIVATE sfml-graphics)

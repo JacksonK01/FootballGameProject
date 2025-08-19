@@ -2,6 +2,9 @@
 // Created by jkirc on 8/10/2025.
 //
 #pragma once
+#include "SFML/Graphics/RenderWindow.hpp"
+#include "SFML/Graphics/RectangleShape.hpp"
+
 namespace util {
 #ifndef RECTANGLE_H
 #define RECTANGLE_H
@@ -31,6 +34,17 @@ namespace util {
                 other.y > y + height;
 
             return !doesOverlap;
+        }
+
+        // ---------- render method ----------
+        void render(sf::RenderWindow& window) const {
+            sf::Color color = sf::Color::Green;
+            sf::RectangleShape shape(sf::Vector2f(static_cast<float>(width), static_cast<float>(height)));
+            shape.setFillColor(sf::Color::Transparent); // transparent fill
+            shape.setOutlineColor(color);               // outline color
+            shape.setOutlineThickness(2.f);            // outline thickness
+            shape.setPosition(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)));
+            window.draw(shape);
         }
 
     private:

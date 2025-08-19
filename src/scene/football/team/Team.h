@@ -17,9 +17,15 @@ public:
     {}
 
     DepthChart& getDepthChart() { return this->depthChart; }
+    //gets called on when it's time to get a play up and going.
+    void playcall() {
+
+    }
+
 private:
     Roster roster;
     DepthChart depthChart;
+    double currentYardOnField = 0;
 };
 
 #endif //TEAM_H

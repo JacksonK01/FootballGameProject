@@ -5,8 +5,8 @@
 #ifndef THROWNPASSEVENT_H
 #define THROWNPASSEVENT_H
 #include "../../../Event.h"
-#include "../../../../scene/football/entity/positions/PositionEntity.h"
 
+class PositionEntity;
 
 struct ThrownPassEvent : Event {
     explicit ThrownPassEvent(PositionEntity& qb, const Vector2D& pos) : qb(qb), pos(pos) {}

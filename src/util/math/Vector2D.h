@@ -85,6 +85,28 @@ public:
         return Vector2D(0.0, 1.0);
     }
 
+    void render(sf::RenderWindow& window, const Vector2D& origin) const {
+        // line from origin → tip
+        sf::Vertex line[] = {
+            sf::Vertex(sf::Vector2f(static_cast<float>(origin.getX()), static_cast<float>(origin.getY())), sf::Color::Red),
+            sf::Vertex(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)), sf::Color::Red)
+        };
+
+        window.draw(line, 2, sf::PrimitiveType::Lines);
+
+        // circle at the tip
+        float radius = 5.0f;
+        sf::CircleShape tip(radius);
+        tip.setFillColor(sf::Color::Red);
+
+        // center the circle on the tip
+        tip.setOrigin(sf::Vector2f(radius, radius));
+        tip.setPosition(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)));
+
+        window.draw(tip);
+    }
+
+
     // Output stream (friend function)
     friend std::ostream& operator<<(std::ostream& os, const Vector2D& vec) {
         os << "(" << vec.x << ", " << vec.y << ")";

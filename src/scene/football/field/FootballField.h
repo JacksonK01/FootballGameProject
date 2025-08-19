@@ -4,6 +4,8 @@
 
 #ifndef FOOTBALLFIELD_H
 #define FOOTBALLFIELD_H
+#include "FieldConstants.h"
+#include "FieldState.h"
 #include "../../../event/events/football/entity/FootballHitGroundEvent.h"
 #include "../../../event/events/football/entity/ThrownPassEvent.h"
 #include "../team/Team.h"
@@ -13,19 +15,6 @@
 //Possibly should house interaction logic between players? Will decide later.
 class FootballField {
 public:
-    static constexpr int PIXEL_PER_YARD = 16;
-
-    static constexpr int FIELD_LENGTH_YARDS = 100;
-    static constexpr int FIELD_WIDTH_YARDS = 53;
-    static constexpr int YARDS_FOR_FIRST = 10;
-    static constexpr int ENTIRE_LENGTH_OF_FIELD = FIELD_LENGTH_YARDS + 2 * YARDS_FOR_FIRST;
-
-    static constexpr int PLAYING_FIELD_LENGTH_PX = FIELD_LENGTH_YARDS * PIXEL_PER_YARD;
-    static constexpr int ENDZONE_DEPTH_PX = YARDS_FOR_FIRST * PIXEL_PER_YARD;
-    static constexpr int ENTIRE_LENGTH_OF_FIELD_PX = ENTIRE_LENGTH_OF_FIELD * PIXEL_PER_YARD;
-    static constexpr int FIELD_WIDTH_PX = FIELD_WIDTH_YARDS * PIXEL_PER_YARD;
-
-
     explicit FootballField(EventBus& eventBus): eventBus(eventBus), team1(eventBus), team2(eventBus) {
         std::string errorMessage = "Unable to load tile texture for field";
         std::string prefix = "../assets/texture/tile/";
@@ -45,12 +34,12 @@ public:
     };
 
     void tick(double dt) {
-        team1.getDepthChart().getStartingQB()->tick(dt);
-        football.tick(dt);
-
-        if (football.isOnGround()) {
-            auto footballHitGroundEvent = FootballHitGroundEvent(this->football);
-            eventBus.emit(footballHitGroundEvent);
+        switch (state) {
+            case PLAY_CALLING: playCallingState(dt); break;
+            case SNAP: snappedBallState(dt); break;
+            default: {
+                Logger::error("Missing Field State", typeid(*this));
+            }
         }
     };
 
@@ -65,13 +54,14 @@ public:
     //TODO this will need to be replaced with getTeamOffense and getTeamDefense.
     Team& getTeamOffense() { return team1; }
 
-    Vector2D getPos() const { return Vector2D(this->x, this->y); }
+    Vector2D getPos() const { return {this->x, this->y}; }
 
 private:
     EventBus& eventBus;
     Team team1;
     Team team2;
     FootballEntity football;
+    FieldState state = FieldState::SNAP;
 
     sf::Texture texture;
 
@@ -81,6 +71,21 @@ private:
     sf::Texture grass;
     sf::Texture boundary;
 
+    void playCallingState(double dt) {
+        team1.playcall();
+        team2.playcall();
+    }
+
+    //For when the ball gets snapped
+    void snappedBallState(double dt) {
+        team1.getDepthChart().getStartingQB()->tick(dt);
+        football.tick(dt);
+
+        if (football.isOnGround()) {
+            auto footballHitGroundEvent = FootballHitGroundEvent(this->football);
+            eventBus.emit(footballHitGroundEvent);
+        }
+    }
 
     //Using this in a lambda capture gives a POINTER of the object. Feels like pointers have no standard in C++, imo should be able to do
     //something like *this to de-reference and pass a reference into the lambda. If you want to capture all variables used in a lambda
@@ -129,12 +134,12 @@ private:
         sf::Sprite gSprite(grass);
         int spriteX = gSprite.getTextureRect().size.x;
         int spriteY = gSprite.getTextureRect().size.y;
-        gSprite.setScale(sf::Vector2f(PIXEL_PER_YARD / spriteX, PIXEL_PER_YARD / spriteY));
+        gSprite.setScale(sf::Vector2f(FieldConstants::PIXEL_PER_YARD / spriteX, FieldConstants::PIXEL_PER_YARD / spriteY));
 
         //Drass grass on every inch of the field there should be some
-        for (int dx = x; dx < ENTIRE_LENGTH_OF_FIELD; dx++) {
-            for (int dy = y; dy < FIELD_WIDTH_YARDS; dy++) {
-                gSprite.setPosition(sf::Vector2f(dx * PIXEL_PER_YARD, dy * PIXEL_PER_YARD));
+        for (int dx = x; dx < FieldConstants::ENTIRE_LENGTH_OF_FIELD; dx++) {
+            for (int dy = y; dy < FieldConstants::FIELD_WIDTH_YARDS; dy++) {
+                gSprite.setPosition(sf::Vector2f(dx * FieldConstants::PIXEL_PER_YARD, dy * FieldConstants::PIXEL_PER_YARD));
                 window.draw(gSprite);
             }
         }
@@ -148,18 +153,18 @@ private:
         sf::Sprite bSprite(boundary);
         int spriteX = bSprite.getTextureRect().size.x;
         int spriteY = bSprite.getTextureRect().size.y;
-        bSprite.setScale(sf::Vector2f(PIXEL_PER_YARD / spriteX, PIXEL_PER_YARD / spriteY));
+        bSprite.setScale(sf::Vector2f(FieldConstants::PIXEL_PER_YARD / spriteX, FieldConstants::PIXEL_PER_YARD / spriteY));
 
-        for (int dx = x; dx < ENTIRE_LENGTH_OF_FIELD + 1; dx++) {
+        for (int dx = x; dx < FieldConstants::ENTIRE_LENGTH_OF_FIELD + 1; dx++) {
 
             //TODO check if the dy should increment to FieldWidth + 2. It might be shrinking the field on accident here.
-            for (int dy = y; dy < FIELD_WIDTH_YARDS; dy++) {
+            for (int dy = y; dy < FieldConstants::FIELD_WIDTH_YARDS; dy++) {
                 //This condition is for the top and bottom lines of the field, making sure they get rendered.
-                if (dy == y || dy == FIELD_WIDTH_YARDS - 1) {
-                    bSprite.setPosition(sf::Vector2f(dx * PIXEL_PER_YARD, dy * PIXEL_PER_YARD));
+                if (dy == y || dy == FieldConstants::FIELD_WIDTH_YARDS - 1) {
+                    bSprite.setPosition(sf::Vector2f(dx * FieldConstants::PIXEL_PER_YARD, dy * FieldConstants::PIXEL_PER_YARD));
                     window.draw(bSprite);
-                } else if (dx % YARDS_FOR_FIRST == 0) {
-                    bSprite.setPosition(sf::Vector2f(dx * PIXEL_PER_YARD, dy * PIXEL_PER_YARD));
+                } else if (dx % FieldConstants::YARDS_FOR_FIRST == 0) {
+                    bSprite.setPosition(sf::Vector2f(dx * FieldConstants::PIXEL_PER_YARD, dy * FieldConstants::PIXEL_PER_YARD));
                     window.draw(bSprite);
                 }
             }

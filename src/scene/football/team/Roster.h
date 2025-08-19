@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "../entity/positions/PositionEntity.h"
-#include "../entity/positions/QB/QBEntity.h"
 
 //Object that stores every player on a team. This is not meant to store the order they start in, just who is on what team.
 //This is where entities will be created, and then possibly written to I/O.
@@ -16,8 +15,12 @@ class Roster {
 public:
     static constexpr int MAX_ROSTER_SIZE = 53;
 
-    Roster(Emitter& emitter) {
-        addPlayer(new QBEntity(emitter));
+    explicit Roster(Emitter& emitter) {
+        addPlayer(new PositionEntity(emitter, QB));
+
+        addPlayer(new PositionEntity(emitter, WR));
+        addPlayer(new PositionEntity(emitter, WR));
+        addPlayer(new PositionEntity(emitter, WR));
     };
 
     bool addPlayer(PositionEntity* player) {
