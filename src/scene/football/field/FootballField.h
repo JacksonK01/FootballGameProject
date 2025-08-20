@@ -31,6 +31,14 @@ public:
 
         football.isVisible(false);
         getTeamOffense().getDepthChart().getStartingQB()->giveFootball(&football);
+
+        int x = this->x + (FieldConstants::YARDS_FOR_FIRST * FieldConstants::PIXEL_PER_YARD / 2);
+        int y = this->y + (FieldConstants::FIELD_WIDTH_YARDS * FieldConstants::PIXEL_PER_YARD / 2);
+        team1.getDepthChart().getStartingQB()->setX(x);
+        team1.getDepthChart().getStartingQB()->setY(y);
+
+        team1.getDepthChart().getWR(0)->setX(x);
+        team1.getDepthChart().getWR(0)->setY(y / 2);
     };
 
     void tick(double dt) {
@@ -48,6 +56,7 @@ public:
         renderBoundariesLayer(dt, window);
 
         team1.getDepthChart().getStartingQB()->render(dt, window);
+        team1.getDepthChart().getWR(0)->render(dt, window);
         football.render(dt, window);
     };
 
@@ -79,6 +88,7 @@ private:
     //For when the ball gets snapped
     void snappedBallState(double dt) {
         team1.getDepthChart().getStartingQB()->tick(dt);
+        team1.getDepthChart().getWR(0)->tick(dt);
         football.tick(dt);
 
         if (football.isOnGround()) {

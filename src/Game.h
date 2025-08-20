@@ -46,7 +46,10 @@ public:
                 //https://www.sfml-dev.org/tutorials/3.0/window/events/#the-keypressed-and-keyreleased-events
                 if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
                 {
-                    auto pos = Vector2D(mouseButtonPressed->position.x + debugX, mouseButtonPressed->position.y + debugY);
+                    //This mapPixelToCoords scales it with current view
+                    sf::Vector2f mapped = window.mapPixelToCoords({mouseButtonPressed->position.x, mouseButtonPressed->position.y});
+                    auto pos = Vector2D(mapped.x, mapped.y);
+
                     std::string out = "Mouse X: " + std::to_string(pos.getX()) + " Mouse Y: " + std::to_string(pos.getY());
 
                     Logger::log(out, typeid(*this));
@@ -93,7 +96,9 @@ private:
         }
 
         //TODO this is just for testing. Don't leave this in here long term.
-        sf::View testing = sf::View(sf::FloatRect(sf::Vector2<float>(debugX, debugY), sf::Vector2<float>(WINDOW_WIDTH, WINDOW_HEIGHT)));
+        sf::View testing = sf::View(sf::FloatRect(sf::Vector2<float>(debugX, debugY), sf::Vector2<float>(WINDOW_WIDTH * 1.25, WINDOW_HEIGHT * 1.25)));
+        testing.setCenter({WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2});
+        testing.move(sf::Vector2<float>(debugX, debugY));
         window.setView(testing);
     }
 };

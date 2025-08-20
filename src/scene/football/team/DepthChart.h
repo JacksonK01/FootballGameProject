@@ -28,7 +28,7 @@ public:
 
     //i is used to find which WR, for example i = 0 means WR1
     PositionEntity* getWR(int i) {
-        if (0 <= i && i < 3) {
+        if (0 < i && i < depth[WR].size()) {
             Logger::error("This WR doesn't exist", typeid(*this));
         }
         return depth[WR][i];

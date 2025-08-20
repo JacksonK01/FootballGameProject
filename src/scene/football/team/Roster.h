@@ -19,8 +19,6 @@ public:
         addPlayer(new PositionEntity(emitter, QB));
 
         addPlayer(new PositionEntity(emitter, WR));
-        addPlayer(new PositionEntity(emitter, WR));
-        addPlayer(new PositionEntity(emitter, WR));
     };
 
     bool addPlayer(PositionEntity* player) {

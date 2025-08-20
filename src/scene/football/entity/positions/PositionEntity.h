@@ -16,11 +16,23 @@
 //Any position will be able to do anything.
 class PositionEntity : public Entity {
 public:
+    //TODO delete this, just place holder
+    static constexpr float SCALE = 3.f;
+
     explicit PositionEntity(Emitter& emitter, Position primaryPosition) : primaryPosition(primaryPosition), emitter(emitter) {
-        //Checks if texture does not load
-        if (!dropbackTexture.loadFromFile("../assets/entity/QB.png")) {
-            Logger::error("QB unable to load texture", typeid(*this));
+        std::string prefix = "../assets/entity/";
+        if (!dropbackTexture.loadFromFile(prefix + "QB.png")) {
+            Logger::error("Unable to load QB texture", typeid(*this));
         }
+
+        prefix = "../assets/texture/entity/position/";
+
+        if (!idle.loadFromFile(prefix + "idle.png")) {
+            Logger::error("Unable to load idle texture", typeid(*this));
+        }
+
+        boundingBox.setWidth(16 * SCALE);
+        boundingBox.setHeight(16 * SCALE);
 
         //placeholder value for now.
         this->rating.speed = 5;
@@ -63,7 +75,7 @@ public:
     }
 
     //returns true if have football
-    virtual bool doesHaveFootball() {
+    bool doesHaveFootball() {
         return this->football;
     }
 
@@ -72,11 +84,21 @@ public:
     Position getPosition() { return primaryPosition; }
 
     void render(double dt, sf::RenderWindow &window) override {
-        sf::Sprite qb(dropbackTexture);
-        qb.setPosition(sf::Vector2f(x, y));
-        qb.scale(sf::Vector2f(3.f, 3.f));
+        sf::Texture* toUse;
+        if (doesHaveFootball()) {
+            toUse = &dropbackTexture;
+        } else {
+            toUse = &idle;
+        }
 
-        window.draw(qb);
+        sf::Sprite self(*toUse);
+        self.setPosition(sf::Vector2f(x, y));
+        self.scale(sf::Vector2f(SCALE, SCALE));
+
+        window.draw(self);
+        if (Config::IS_DEBUG_MODE) {
+            boundingBox.render(window);
+        }
     }
 
 protected:
@@ -85,6 +107,9 @@ protected:
     Rating rating;
     Emitter& emitter;
 
+    //Generic texture
+    sf::Texture idle;
+    //Qb texture
     sf::Texture dropbackTexture;
 
     //Meant for only internals

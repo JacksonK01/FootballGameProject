@@ -23,8 +23,10 @@ namespace util {
         [[nodiscard]] double getWidth() const { return this->width; }
         [[nodiscard]] double getHeight() const { return this->height; }
 
-        void setX(const double x) { this->x = x; }
-        void setY(const double y) { this->y = y; }
+        void setX(const double& x) { this->x = x; }
+        void setY(const double& y) { this->y = y; }
+        void setWidth(const double& width) { this->width = width; }
+        void setHeight(const double& height) { this->height = height; }
 
         [[nodiscard]] bool intersects(const Rectangle& other) const {
             const bool doesOverlap =

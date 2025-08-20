@@ -49,6 +49,7 @@ add_executable(FootballGameProject
         src/scene/football/util/FormationType.h
         src/scene/football/camera/Camera.h
         src/scene/football/field/FieldConstants.h
+        src/scene/football/route/Route.h
 )
 
 target_link_libraries(FootballGameProject PRIVATE sfml-graphics)
