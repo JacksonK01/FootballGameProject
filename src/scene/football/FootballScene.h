@@ -37,6 +37,10 @@ public:
         });
 
         player1.setLinkedEntity(field.getTeamOffense().getDepthChart().getStartingQB());
+
+        eventBus.subscribe<PassCaughtEvent>([this](PassCaughtEvent& event) {
+            player1.setLinkedEntity(event.wr);
+        });
     };
 
     void tick(double dt) override {

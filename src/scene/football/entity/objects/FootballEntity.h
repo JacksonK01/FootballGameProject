@@ -10,12 +10,16 @@
 #include "SFML/Graphics/Texture.hpp"
 #include "SFML/Graphics/Sprite.hpp"
 
+class PositionEntity;
 
 //Will be used to represent the actual football itself in game.
 //A football's state will modify during a play and be reset once a play is over and the game moves to the next.
 class FootballEntity : public Entity {
 public:
-    FootballEntity() : Entity() {
+    //TODO delete this
+    static constexpr float SCALE = 2.f;
+
+    FootballEntity() : Entity(0, 0, {0, 0, 16 * SCALE, 8 * SCALE}) {
         if (!texture.loadFromFile("../assets/entity/Football.png")) {
             Logger::error("Football unable to load texture", typeid(*this));
         }
@@ -75,12 +79,13 @@ public:
         ball.setOrigin(sf::Vector2f(0.f, size / 2));
         ball.setPosition(sf::Vector2f(x, y - z));
 
-        ball.scale(sf::Vector2f(2.f, 2.f));
+        ball.scale(sf::Vector2f(SCALE, SCALE));
 
         window.draw(ball);
 
         if (Config::IS_DEBUG_MODE) {
             destination.render(window, {x, y});
+            boundingBox.render(window);
         }
     };
 
@@ -106,6 +111,16 @@ public:
 
     bool isOnGround() const { return this->isGrounded; }
 
+    void setOwner(PositionEntity* owner) { this->owner = owner; }
+
+    PositionEntity* getOwner() {
+        if (!owner) {
+            Logger::error("Football does not have owner", typeid(*this));
+        }
+
+        return owner;
+    }
+
 private:
     double z = 0;
 
@@ -116,7 +131,8 @@ private:
     //Tracks how far along the throw you are.
     double traveledDistance = 0;
 
-
+    //Whoever threw ball
+    PositionEntity* owner = nullptr;
 
     sf::Texture texture;
     Vector2D destination;

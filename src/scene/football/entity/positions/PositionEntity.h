@@ -4,8 +4,11 @@
 
 #ifndef POSITIONENTITY_H
 #define POSITIONENTITY_H
+#include "PositionEntityState.h"
 #include "../Entity.h"
 #include "../../../../event/events/football/entity/ThrownPassEvent.h"
+#include "../../route/Route.h"
+
 #include "../../util/Position.h"
 #include "../objects/FootballEntity.h"
 #include "rating/Ratings.h"
@@ -20,12 +23,11 @@ public:
     static constexpr float SCALE = 3.f;
 
     explicit PositionEntity(Emitter& emitter, Position primaryPosition) : primaryPosition(primaryPosition), emitter(emitter) {
-        std::string prefix = "../assets/entity/";
-        if (!dropbackTexture.loadFromFile(prefix + "QB.png")) {
+        std::string prefix = "../assets/texture/entity/position/";
+
+        if (!dropbackTexture.loadFromFile(prefix + "qb.png")) {
             Logger::error("Unable to load QB texture", typeid(*this));
         }
-
-        prefix = "../assets/texture/entity/position/";
 
         if (!idle.loadFromFile(prefix + "idle.png")) {
             Logger::error("Unable to load idle texture", typeid(*this));
@@ -83,6 +85,15 @@ public:
 
     Position getPosition() { return primaryPosition; }
 
+    void tick(double dt) override {
+        Entity::tick(dt);
+
+        switch (state) {
+            case IDLE: idleState();
+            case READY_TO_THROW: readyToThrow();
+        }
+    }
+
     void render(double dt, sf::RenderWindow &window) override {
         sf::Texture* toUse;
         if (doesHaveFootball()) {
@@ -95,6 +106,10 @@ public:
         self.setPosition(sf::Vector2f(x, y));
         self.scale(sf::Vector2f(SCALE, SCALE));
 
+        if (route) {
+            route->render(dt, window);
+        }
+
         window.draw(self);
         if (Config::IS_DEBUG_MODE) {
             boundingBox.render(window);
@@ -106,6 +121,8 @@ protected:
     Position primaryPosition;
     Rating rating;
     Emitter& emitter;
+    Route* route = nullptr;
+    PositionEntityState state = IDLE;
 
     //Generic texture
     sf::Texture idle;
@@ -124,6 +141,10 @@ protected:
 
 private:
     FootballEntity* football = nullptr;
+
+    void idleState() {}
+
+    void readyToThrow() {}
 };
 
 #endif //POSITIONENTITY_H

@@ -8,8 +8,9 @@
 #include "../../../../scene/football/entity/objects/FootballEntity.h"
 
 struct FootballHitGroundEvent : Event {
-    explicit FootballHitGroundEvent(FootballEntity& football) : football(football) {};
+    explicit FootballHitGroundEvent(FootballEntity& football, PositionEntity* thrower) : football(football), thrower(thrower) {};
     FootballEntity& football;
+    PositionEntity* thrower;
 };
 
 #endif //FOOTBALLHITGROUNDEVENT_H

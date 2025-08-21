@@ -6,6 +6,7 @@
 #define IDLE_H
 #include "../IState.h"
 
+//Dummy state
 class IdleState : public IState {
     void onEnter() override {
 

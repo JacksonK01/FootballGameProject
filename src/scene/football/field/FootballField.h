@@ -7,6 +7,7 @@
 #include "FieldConstants.h"
 #include "FieldState.h"
 #include "../../../event/events/football/entity/FootballHitGroundEvent.h"
+#include "../../../event/events/football/entity/PassCaughtEvent.h"
 #include "../../../event/events/football/entity/ThrownPassEvent.h"
 #include "../team/Team.h"
 #include "SFML/Graphics/RenderWindow.hpp"
@@ -92,7 +93,7 @@ private:
         football.tick(dt);
 
         if (football.isOnGround()) {
-            auto footballHitGroundEvent = FootballHitGroundEvent(this->football);
+            auto footballHitGroundEvent = FootballHitGroundEvent(football, football.getOwner());
             eventBus.emit(footballHitGroundEvent);
         }
     }
@@ -118,20 +119,34 @@ private:
             football.isVisible(true);
             football.initiateThrow();
 
+            football.setOwner(&qb);
+
             qb.removeFootball();
         });
 
         //Test implementation
         eventBus.subscribe<FootballHitGroundEvent>([this](FootballHitGroundEvent& event) {
-            auto qb = getTeamOffense().getDepthChart().getStartingQB();
-
             football.reset();
             football.isVisible(false);
 
-            if (!qb->giveFootball(&football)) {
-                Logger::error("Failed to give QB football", typeid(*this));
-            }
+            const util::Rectangle& box = football.getBoundingBox();
 
+            auto* wr = getTeamOffense().getDepthChart().getWR(0);
+            auto* qb = getTeamOffense().getDepthChart().getStartingQB();
+
+            if (wr->getBoundingBox().intersects(box)) {
+                auto catchEvent = PassCaughtEvent(wr, football);
+                this->eventBus.emit(catchEvent);
+            } else if (qb->getBoundingBox().intersects(box)) {
+                auto catchEvent = PassCaughtEvent(qb, football);
+                this->eventBus.emit(catchEvent);
+            } else {
+                event.thrower->giveFootball(&football);
+            }
+        });
+
+        eventBus.subscribe<PassCaughtEvent>([this](PassCaughtEvent& event) {
+            event.wr->giveFootball(&event.football);
         });
 
     }

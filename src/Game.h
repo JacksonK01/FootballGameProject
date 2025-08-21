@@ -49,10 +49,6 @@ public:
                     //This mapPixelToCoords scales it with current view
                     sf::Vector2f mapped = window.mapPixelToCoords({mouseButtonPressed->position.x, mouseButtonPressed->position.y});
                     auto pos = Vector2D(mapped.x, mapped.y);
-
-                    std::string out = "Mouse X: " + std::to_string(pos.getX()) + " Mouse Y: " + std::to_string(pos.getY());
-
-                    Logger::log(out, typeid(*this));
                     currentScene->mousePressed(mouseButtonPressed->button, pos);
                 }
             }
