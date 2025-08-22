@@ -52,6 +52,7 @@ add_executable(FootballGameProject
         src/scene/football/route/Route.h
         src/event/events/football/entity/PassCaughtEvent.h
         src/scene/football/entity/positions/PositionEntityState.h
+        src/scene/football/route/RouteBuilder.h
 )
 
 target_link_libraries(FootballGameProject PRIVATE sfml-graphics)

@@ -17,18 +17,43 @@ public:
 
     Route() = default;
 
-    explicit Route(const Vector2D& origin) : origin(std::move(origin)), path() {}
-    Route(const Vector2D& origin, const std::vector<Vector2D>& path) : origin(std::move(origin)), path(std::move(path)) {}
+    Route(const std::vector<Vector2D>& path, const bool& isContinuous) : path(std::move(path)), isContinuous(isContinuous) {}
 
-    void render(double dt, sf::RenderWindow& window) const {
-        for (auto& part : path) {
-            part.render(window, origin);
+    //TODO impliment better.
+    //O(n!)
+    void render(double dt, sf::RenderWindow& window, const Vector2D& origin) const {
+        std::vector<Vector2D> cache = std::vector<Vector2D>();
+        for (auto& step : path) {
+            auto scaled = step;
+
+            for (auto& prev : cache) {
+                scaled = scaled + prev;
+            }
+
+            (origin + scaled).render(window, origin);
+            cache.emplace_back(step);
         }
     }
 
+    void incrementRouteStep() {
+        step++;
+    }
+
+    Vector2D& getRouteStep() {
+        if (isRouteDone()) {
+            Logger::error("Route is finished!", typeid(*this));
+        }
+        return path[step];
+    }
+
+    bool isRouteDone() { return step >= path.size(); }
+
+    void resetStep() { step = 0; }
+
 protected:
-    Vector2D origin;
     std::vector<Vector2D> path;
+    int step = 0;
+    bool isContinuous = false;
 };
 
 #endif //ROUTE_H

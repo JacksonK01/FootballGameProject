@@ -33,14 +33,25 @@ public:
         football.isVisible(false);
         getTeamOffense().getDepthChart().getStartingQB()->giveFootball(&football);
 
+        snapBall();
+    };
+
+    //Called when space bar input
+    //For now will just be a pos reset
+    void snapBall() {
         int x = this->x + (FieldConstants::YARDS_FOR_FIRST * FieldConstants::PIXEL_PER_YARD / 2);
         int y = this->y + (FieldConstants::FIELD_WIDTH_YARDS * FieldConstants::PIXEL_PER_YARD / 2);
-        team1.getDepthChart().getStartingQB()->setX(x);
-        team1.getDepthChart().getStartingQB()->setY(y);
 
-        team1.getDepthChart().getWR(0)->setX(x);
-        team1.getDepthChart().getWR(0)->setY(y / 2);
-    };
+        auto* qb = getTeamOffense().getDepthChart().getStartingQB();
+        qb->setX(x);
+        qb->setY(y);
+
+        auto* wr = getTeamOffense().getDepthChart().getWR(0);
+        wr->setX(x);
+        wr->setY(y / 2);
+        wr->resetRoute();
+        wr->setState(PositionEntityState::RUN_ROUTE);
+    }
 
     void tick(double dt) {
         switch (state) {

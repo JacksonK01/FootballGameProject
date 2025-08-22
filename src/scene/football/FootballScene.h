@@ -36,6 +36,10 @@ public:
             player1.onMouseClicked(pos);
         });
 
+        inputManager.createKeyPressedEvent(sf::Keyboard::Key::Space, [this]() {
+            field.snapBall();
+        });
+
         player1.setLinkedEntity(field.getTeamOffense().getDepthChart().getStartingQB());
 
         eventBus.subscribe<PassCaughtEvent>([this](PassCaughtEvent& event) {

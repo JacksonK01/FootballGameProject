@@ -7,6 +7,7 @@
 #include "PositionEntityState.h"
 #include "../Entity.h"
 #include "../../../../event/events/football/entity/ThrownPassEvent.h"
+#include "../../field/FieldConstants.h"
 #include "../../route/Route.h"
 
 #include "../../util/Position.h"
@@ -37,8 +38,16 @@ public:
         boundingBox.setHeight(16 * SCALE);
 
         //placeholder value for now.
-        this->rating.speed = 5;
+        this->rating.speed = 4;
         this->rating.throwPower = 50;
+
+        //Dummy value to do a vert
+        auto path = std::vector<Vector2D>();
+        path.emplace_back(Vector2D(50 * FieldConstants::PIXEL_PER_YARD, 0));
+        path.emplace_back(Vector2D(0, 35 * FieldConstants::PIXEL_PER_YARD));
+        auto* dig = new Route(path, true);
+
+        this->route = dig;
     }
 
     //For inputs from a player controller
@@ -85,12 +94,23 @@ public:
 
     Position getPosition() { return primaryPosition; }
 
+    void setState(const PositionEntityState& state) { this->state = state; }
+
+    //TODO delete this
+    void resetRoute() {
+        route->resetStep();
+    }
+
     void tick(double dt) override {
         Entity::tick(dt);
 
         switch (state) {
-            case IDLE: idleState();
-            case READY_TO_THROW: readyToThrow();
+            case IDLE: idleState(); break;
+            case READY_TO_THROW: readyToThrow(); break;
+            case RUN_ROUTE: runRoute(dt); break;
+            default: {
+                Logger::error("No State Active", typeid(*this));
+            }
         }
     }
 
@@ -106,8 +126,8 @@ public:
         self.setPosition(sf::Vector2f(x, y));
         self.scale(sf::Vector2f(SCALE, SCALE));
 
-        if (route) {
-            route->render(dt, window);
+        if (route && state == RUN_ROUTE) {
+            route->render(dt, window, {x, y});
         }
 
         window.draw(self);
@@ -145,6 +165,33 @@ private:
     void idleState() {}
 
     void readyToThrow() {}
+
+    //TODO delete routeStartPos
+    Vector2D* routeStartPos = nullptr;
+    void runRoute(double dt) {
+        if (route->isRouteDone() || doesHaveFootball()) {
+            return;
+        }
+
+        if (!routeStartPos) {
+            routeStartPos = new Vector2D(x, y);
+        }
+
+        Vector2D currentPos = {x, y};
+
+        Vector2D destination = (route->getRouteStep() + *routeStartPos) - currentPos;
+
+        Vector2D direction = destination.normalize();
+
+        x += rating.speed * direction.getX();
+        y += rating.speed * direction.getY();
+
+        double range = 15;
+        if (destination.length() <= range) {
+            routeStartPos = nullptr;
+            route->incrementRouteStep();
+        }
+    }
 };
 
 #endif //POSITIONENTITY_H
