@@ -9,6 +9,7 @@
 #include "../../../event/events/football/entity/FootballHitGroundEvent.h"
 #include "../../../event/events/football/entity/PassCaughtEvent.h"
 #include "../../../event/events/football/entity/ThrownPassEvent.h"
+#include "../route/RoutePresets.h"
 #include "../team/Team.h"
 #include "SFML/Graphics/RenderWindow.hpp"
 
@@ -49,8 +50,8 @@ public:
         auto* wr = getTeamOffense().getDepthChart().getWR(0);
         wr->setX(x);
         wr->setY(y / 2);
-        wr->resetRoute();
-        wr->setState(PositionEntityState::RUN_ROUTE);
+
+        wr->runRoute(RoutePresets::dig());
     }
 
     void tick(double dt) {

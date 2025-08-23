@@ -17,20 +17,20 @@ public:
 
     Route() = default;
 
-    Route(const std::vector<Vector2D>& path, const bool& isContinuous) : path(std::move(path)), isContinuous(isContinuous) {}
+    explicit Route(const bool& isContinuous) : isContinuous(isContinuous) {}
 
-    //TODO impliment better.
+    void addStep(const Vector2D& step) {
+        path.emplace_back(step);
+    }
+
     void render(double dt, sf::RenderWindow& window, const Vector2D& origin) const {
-        std::vector<Vector2D> cache = std::vector<Vector2D>();
+        Vector2D current = origin;
+
         for (auto& step : path) {
-            auto scaled = step;
+            Vector2D relativeStep = step + current;
 
-            for (auto& prev : cache) {
-                scaled = scaled + prev;
-            }
-
-            (origin + scaled).render(window, origin);
-            cache.emplace_back(step);
+            relativeStep.render(window, current);
+            current = relativeStep;
         }
     }
 
@@ -50,7 +50,7 @@ public:
     void resetStep() { step = 0; }
 
 protected:
-    std::vector<Vector2D> path;
+    std::vector<Vector2D> path = std::vector<Vector2D>();
     int step = 0;
     bool isContinuous = false;
 };

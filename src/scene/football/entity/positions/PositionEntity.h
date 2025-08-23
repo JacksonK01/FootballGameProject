@@ -40,14 +40,6 @@ public:
         //placeholder value for now.
         this->rating.speed = 4;
         this->rating.throwPower = 50;
-
-        //Dummy value to do a vert
-        auto path = std::vector<Vector2D>();
-        path.emplace_back(Vector2D(50 * FieldConstants::PIXEL_PER_YARD, 0));
-        path.emplace_back(Vector2D(0, 35 * FieldConstants::PIXEL_PER_YARD));
-        auto* dig = new Route(path, true);
-
-        this->route = dig;
     }
 
     //For inputs from a player controller
@@ -96,9 +88,11 @@ public:
 
     void setState(const PositionEntityState& state) { this->state = state; }
 
-    //TODO delete this
-    void resetRoute() {
-        route->resetStep();
+    void runRoute(const Route& route) {
+        this->state = RUN_ROUTE;
+
+        //Creates a copy.
+        this->route = std::move(route);
     }
 
     void tick(double dt) override {
@@ -116,6 +110,7 @@ public:
 
     void render(double dt, sf::RenderWindow &window) override {
         sf::Texture* toUse;
+
         if (doesHaveFootball()) {
             toUse = &dropbackTexture;
         } else {
@@ -126,8 +121,14 @@ public:
         self.setPosition(sf::Vector2f(x, y));
         self.scale(sf::Vector2f(SCALE, SCALE));
 
-        if (route && state == RUN_ROUTE) {
-            route->render(dt, window, {x, y});
+        if (route && state == RUN_ROUTE && !route->isRouteDone()) {
+            if (!routeOrigin) {
+                routeOrigin = new Vector2D(x, y);
+            }
+
+            route->render(dt, window, *routeOrigin);
+        } else {
+            routeOrigin = nullptr;
         }
 
         window.draw(self);
@@ -141,7 +142,7 @@ protected:
     Position primaryPosition;
     Rating rating;
     Emitter& emitter;
-    Route* route = nullptr;
+    std::optional<Route> route;
     PositionEntityState state = IDLE;
 
     //Generic texture
@@ -161,15 +162,19 @@ protected:
 
 private:
     FootballEntity* football = nullptr;
+    //TODO delete routeStartPos, it's a dummy value for run route to know where the entity started
+    Vector2D* routeStartPos = nullptr;
+
+    //TODO delete routeOrigin, used to know where to keep rendering the route
+    Vector2D* routeOrigin = nullptr;
 
     void idleState() {}
 
     void readyToThrow() {}
 
-    //TODO delete routeStartPos
-    Vector2D* routeStartPos = nullptr;
     void runRoute(double dt) {
-        if (route->isRouteDone() || doesHaveFootball()) {
+        if (!route || route->isRouteDone() || doesHaveFootball()) {
+            this->state = IDLE;
             return;
         }
 

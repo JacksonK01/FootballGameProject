@@ -35,6 +35,7 @@ public:
     void setBoundingBox(const util::Rectangle& newBoundingBox) { boundingBox = newBoundingBox; }
 
 protected:
+    //The x and y are stored in yards not pixels
     double x, y;
     util::Rectangle boundingBox;
 };
