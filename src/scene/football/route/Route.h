@@ -20,7 +20,6 @@ public:
     Route(const std::vector<Vector2D>& path, const bool& isContinuous) : path(std::move(path)), isContinuous(isContinuous) {}
 
     //TODO impliment better.
-    //O(n!)
     void render(double dt, sf::RenderWindow& window, const Vector2D& origin) const {
         std::vector<Vector2D> cache = std::vector<Vector2D>();
         for (auto& step : path) {
