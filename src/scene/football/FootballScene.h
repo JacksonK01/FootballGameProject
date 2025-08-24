@@ -16,23 +16,22 @@ class FootballScene : public Scene {
 public:
     explicit FootballScene(sf::RenderWindow& window) : Scene(window), eventBus(), field(eventBus), player1(nullptr) {
         inputManager.createKeyPressedEvent(sf::Keyboard::Key::W, [this]() {
-            player1.directionalInput(Vector2D(0, -1));
+            direction = direction + Vector2D(0, -1);
         });
 
         inputManager.createKeyPressedEvent(sf::Keyboard::Key::S, [this]() {
-            player1.directionalInput(Vector2D(0, 1));
+            direction = direction + Vector2D(0, 1);
         });
 
         inputManager.createKeyPressedEvent(sf::Keyboard::Key::A, [this]() {
-            player1.directionalInput(Vector2D(-1, 0));
+            direction = direction + Vector2D(-1, 0);
         });
 
         inputManager.createKeyPressedEvent(sf::Keyboard::Key::D, [this]() {
-            player1.directionalInput(Vector2D(1, 0));
+            direction = direction + Vector2D(1, 0);
         });
 
         inputManager.createMouseButtonEvent(sf::Mouse::Button::Left, [this, &window](const Vector2D& pos) {
-            //const sf::Vector2i mousePos = sf::Mouse::getPosition(window.);
             player1.onMouseClicked(pos);
         });
 
@@ -49,6 +48,12 @@ public:
 
     void tick(double dt) override {
         Scene::tick(dt);
+
+        if (direction != Vector2D(0, 0)) {
+            player1.directionalInput(direction);
+            direction = {0, 0};
+        }
+
         field.tick(dt);
     }
 
@@ -64,6 +69,9 @@ private:
     EventBus eventBus;
     FootballField field;
     PlayerController player1;
+
+    //Used so the input can compound
+    Vector2D direction;
 };
 
 #endif //FOOTBALLSCENE_H

@@ -3,7 +3,6 @@ project(FootballGameProject)
 
 set(CMAKE_CXX_STANDARD 20)
 
-
 add_subdirectory(external/SFML)
 
 add_executable(FootballGameProject

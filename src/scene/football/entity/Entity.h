@@ -28,16 +28,23 @@ public:
     [[nodiscard]] double getX() const { return x; }
     [[nodiscard]] double getY() const { return y; }
     [[nodiscard]] util::Rectangle getBoundingBox() const { return boundingBox; }
+    [[nodiscard]] Vector2D getVelocity() const { return velocity; };
+    [[nodiscard]] Vector2D getLookVector() const { return looking; };
 
     // Setters
     void setX(double newX) { x = newX; }
     void setY(double newY) { y = newY; }
     void setBoundingBox(const util::Rectangle& newBoundingBox) { boundingBox = newBoundingBox; }
+    void setVelocity(const Vector2D& velocity) { this->velocity = velocity; }
+    void setLookVec(const Vector2D& direction) { this->looking = direction; }
 
 protected:
     //The x and y are stored in yards not pixels
     double x, y;
     util::Rectangle boundingBox;
+    Vector2D velocity;
+    //Should always be normalized
+    Vector2D looking;
 };
 
 #endif // ENTITY_H

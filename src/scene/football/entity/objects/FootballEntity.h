@@ -28,6 +28,7 @@ public:
     void tick(double dt) override {
         Entity::tick(dt);
 
+
         if (isThrown) {
             Vector2D currentPos = Vector2D(x, y);
             Vector2D directDestination = (destination - currentPos);
@@ -95,10 +96,6 @@ public:
         this->destination = dest;
     }
 
-    void setVelocity(const Vector2D& vel) {
-        this->velocity = std::move(vel);
-    }
-
     void initiateThrow() {
         this->isThrown = true;
     }
@@ -136,7 +133,6 @@ private:
 
     sf::Texture texture;
     Vector2D destination;
-    Vector2D velocity;
 
     //TODO Build a state machine for this.
     bool isThrown = false;

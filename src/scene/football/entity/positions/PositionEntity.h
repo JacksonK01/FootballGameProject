@@ -38,7 +38,7 @@ public:
         boundingBox.setHeight(16 * SCALE);
 
         //placeholder value for now.
-        this->rating.speed = 4;
+        this->rating.speed = 150;
         this->rating.throwPower = 50;
     }
 
@@ -53,8 +53,8 @@ public:
     };
 
     void onDirectionalInput(const Vector2D& direction) {
-        this->x += direction.getX() * this->rating.speed;
-        this->y += direction.getY() * this->rating.speed;
+        looking = direction;
+        this->velocity = Vector2D(direction.getX() * rating.speed, direction.getY() * rating.speed);
     };
 
     //Returns true if football is successfully removed
@@ -98,6 +98,20 @@ public:
     void tick(double dt) override {
         Entity::tick(dt);
 
+        const double step = velocity.length() * dt;
+        const Vector2D direction = velocity.normalize();
+
+        this->x += step * direction.getX();
+        this->y += step * direction.getY();
+
+        if (velocity.length() > .1f) {
+            velocity = velocity.multiply(0.75f);
+
+            if (velocity.length() < .1f) {
+                velocity = Vector2D();
+            }
+        }
+
         switch (state) {
             case IDLE: idleState(); break;
             case READY_TO_THROW: readyToThrow(); break;
@@ -106,6 +120,7 @@ public:
                 Logger::error("No State Active", typeid(*this));
             }
         }
+
     }
 
     void render(double dt, sf::RenderWindow &window) override {
@@ -133,6 +148,9 @@ public:
 
         window.draw(self);
         if (Config::IS_DEBUG_MODE) {
+            Vector2D pos = {x, y};
+            (velocity + pos).render(window, pos, sf::Color::Blue);
+            (looking + pos).render(window, pos, sf::Color::Magenta);
             boundingBox.render(window);
         }
     }
@@ -188,8 +206,9 @@ private:
 
         Vector2D direction = destination.normalize();
 
-        x += rating.speed * direction.getX();
-        y += rating.speed * direction.getY();
+        looking = direction.multiply(FieldConstants::PIXEL_PER_YARD);
+
+        setVelocity({rating.speed * direction.getX(), rating.speed * direction.getY()});
 
         double range = 15;
         if (destination.length() <= range) {

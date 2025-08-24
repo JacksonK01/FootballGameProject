@@ -23,22 +23,25 @@ public:
     void setY(double y) { this->y = y; }
 
     // Core operations
-    Vector2D add(const Vector2D& other) const {
-        return Vector2D(x + other.x, y + other.y);
+    [[nodiscard]] Vector2D add(const Vector2D& other) const {
+        return {x + other.x, y + other.y};
     }
-    Vector2D subtract(const Vector2D& other) const {
-        return Vector2D(x - other.x, y - other.y);
+    [[nodiscard]] Vector2D subtract(const Vector2D& other) const {
+        return {x - other.x, y - other.y};
     }
-    Vector2D multiply(const Vector2D& other) const {
-        return Vector2D(x * other.x, y * other.y);
+    [[nodiscard]] Vector2D multiply(const Vector2D& other) const {
+        return {x * other.x, y * other.y};
     }
-    double length() const {
+    [[nodiscard]] Vector2D multiply(const double& factor) const {
+        return {x * factor, y * factor};
+    }
+    [[nodiscard]] double length() const {
         return std::sqrt(x * x + y * y);
     }
-    double lengthSquared() const {
+    [[nodiscard]] double lengthSquared() const {
         return x * x + y * y;
     }
-    Vector2D normalize() const {
+    [[nodiscard]] Vector2D normalize() const {
         double len = length();
         if (len == 0.0) return Vector2D(0.0, 0.0);
         return Vector2D(x / len, y / len);
@@ -86,10 +89,14 @@ public:
     }
 
     void render(sf::RenderWindow& window, const Vector2D& origin) const {
+        render(window, origin, sf::Color::Red);
+    }
+
+    void render(sf::RenderWindow& window, const Vector2D& origin, const sf::Color& color) const {
         // line from origin → tip
         sf::Vertex line[] = {
-            sf::Vertex(sf::Vector2f(static_cast<float>(origin.getX()), static_cast<float>(origin.getY())), sf::Color::Red),
-            sf::Vertex(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)), sf::Color::Red)
+            sf::Vertex(sf::Vector2f(static_cast<float>(origin.getX()), static_cast<float>(origin.getY())), color),
+            sf::Vertex(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)), color)
         };
 
         window.draw(line, 2, sf::PrimitiveType::Lines);
@@ -97,7 +104,7 @@ public:
         // circle at the tip
         float radius = 5.0f;
         sf::CircleShape tip(radius);
-        tip.setFillColor(sf::Color::Red);
+        tip.setFillColor(color);
 
         // center the circle on the tip
         tip.setOrigin(sf::Vector2f(radius, radius));
