@@ -40,8 +40,8 @@ public:
     //Called when space bar input
     //For now will just be a pos reset
     void snapBall() {
-        int x = this->x + (FieldConstants::YARDS_FOR_FIRST * FieldConstants::PIXEL_PER_YARD / 2);
-        int y = this->y + (FieldConstants::FIELD_WIDTH_YARDS * FieldConstants::PIXEL_PER_YARD / 2);
+        double x = this->x + (FieldConstants::YARDS_FOR_FIRST / 2);
+        double y = this->y + (FieldConstants::FIELD_WIDTH_YARDS / 2);
 
         auto* qb = getTeamOffense().getDepthChart().getStartingQB();
         qb->setX(x);

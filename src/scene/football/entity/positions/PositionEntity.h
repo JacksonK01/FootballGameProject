@@ -38,7 +38,7 @@ public:
         boundingBox.setHeight(16 * SCALE);
 
         //placeholder value for now.
-        this->rating.speed = 150;
+        this->rating.speed = 1;
         this->rating.throwPower = 50;
     }
 
@@ -124,6 +124,10 @@ public:
     }
 
     void render(double dt, sf::RenderWindow &window) override {
+        Vector2D pos = {x * FieldConstants::PIXEL_PER_YARD, y * FieldConstants::PIXEL_PER_YARD};
+        double x = pos.getX();
+        double y = pos.getY();
+
         sf::Texture* toUse;
 
         if (doesHaveFootball()) {
