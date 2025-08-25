@@ -62,7 +62,7 @@ public:
     }
 
     void mousePressed(sf::Mouse::Button button, const Vector2D& pos) override {
-        inputManager.onMousePressed(button, pos);
+        inputManager.onMousePressed(button, FieldConstants::toYards(pos));
     };
 
 private:

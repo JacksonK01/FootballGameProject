@@ -24,10 +24,12 @@ public:
         if (!grass.loadFromFile(prefix + "grass_tile.png")) {
             Logger::error(errorMessage, typeid(*this));
         }
+        grass.setRepeated(true);
 
         if (!boundary.loadFromFile(prefix + "boundary_tile.png")) {
             Logger::error(errorMessage, typeid(*this));
         }
+        boundary.setRepeated(true);
 
         registerEvents(eventBus);
 
@@ -51,7 +53,7 @@ public:
         wr->setX(x);
         wr->setY(y / 2);
 
-        wr->runRoute(RoutePresets::dig());
+        wr->runRoute(RoutePresets::post());
     }
 
     void tick(double dt) {
@@ -118,7 +120,7 @@ private:
 
         eventBus.subscribe<ThrownPassEvent>([this](ThrownPassEvent& event) {
             auto& qb = event.qb;
-            auto posVec = event.pos;
+            auto dest = event.pos;
 
             Vector2D velocity = Vector2D(qb.getRatings().throwPower, qb.getRatings().throwPower);
 
@@ -127,8 +129,9 @@ private:
             football.setY(qb.getY());
 
             football.setVelocity(velocity);
-            football.setDestination(posVec);
+            football.setDestination(dest);
             football.isVisible(true);
+            football.setLookVec((dest - Vector2D(qb.getX(), qb.getY())).normalize());
             football.initiateThrow();
 
             football.setOwner(&qb);
@@ -141,7 +144,7 @@ private:
             football.reset();
             football.isVisible(false);
 
-            const util::Rectangle& box = football.getBoundingBox();
+            const util::Rectangle& box = football.getBoundingBox().inflate(1);
 
             auto* wr = getTeamOffense().getDepthChart().getWR(0);
             auto* qb = getTeamOffense().getDepthChart().getStartingQB();
@@ -164,48 +167,35 @@ private:
     }
 
     void renderGrassLayer(double dt, sf::RenderWindow& window) {
-        double x = this->getPos().getX();
-        double y = this->getPos().getY();
+        util::Rectangle entireField = {this->x, this->y, FieldConstants::ENTIRE_LENGTH_OF_FIELD_PX, FieldConstants::FIELD_WIDTH_PX};
 
-        //TODO move these out of the loop and scale the texture before game runs.
-        sf::Sprite gSprite(grass);
-        int spriteX = gSprite.getTextureRect().size.x;
-        int spriteY = gSprite.getTextureRect().size.y;
-        gSprite.setScale(sf::Vector2f(FieldConstants::PIXEL_PER_YARD / spriteX, FieldConstants::PIXEL_PER_YARD / spriteY));
+        sf::Sprite gSprite = entireField.getSpriteFromRectSize(grass);
 
-        //Drass grass on every inch of the field there should be some
-        for (int dx = x; dx < FieldConstants::ENTIRE_LENGTH_OF_FIELD; dx++) {
-            for (int dy = y; dy < FieldConstants::FIELD_WIDTH_YARDS; dy++) {
-                gSprite.setPosition(sf::Vector2f(dx * FieldConstants::PIXEL_PER_YARD, dy * FieldConstants::PIXEL_PER_YARD));
-                window.draw(gSprite);
-            }
-        }
+        window.draw(gSprite);
     }
 
     void renderBoundariesLayer(double dt, sf::RenderWindow& window) {
-        double x = this->getPos().getX();
-        double y = this->getPos().getY();
+        util::Rectangle boundaryHorizontal = {this->x, this->y, FieldConstants::ENTIRE_LENGTH_OF_FIELD_PX, FieldConstants::PIXEL_PER_YARD};
 
-        //TODO move these out of the loop and scale the texture before game runs.
-        sf::Sprite bSprite(boundary);
-        int spriteX = bSprite.getTextureRect().size.x;
-        int spriteY = bSprite.getTextureRect().size.y;
-        bSprite.setScale(sf::Vector2f(FieldConstants::PIXEL_PER_YARD / spriteX, FieldConstants::PIXEL_PER_YARD / spriteY));
+        sf::Sprite boundaryHSprite = boundaryHorizontal.getSpriteFromRectSize(boundary);
+        window.draw(boundaryHSprite);
+        boundaryHSprite.setPosition(sf::Vector2f(this->x, FieldConstants::FIELD_WIDTH_PX));
+        window.draw(boundaryHSprite);
 
-        for (int dx = x; dx < FieldConstants::ENTIRE_LENGTH_OF_FIELD + 1; dx++) {
+        util::Rectangle boundaryVertical = {this->x, this->y, FieldConstants::PIXEL_PER_YARD, FieldConstants::FIELD_WIDTH_PX};
 
-            //TODO check if the dy should increment to FieldWidth + 2. It might be shrinking the field on accident here.
-            for (int dy = y; dy < FieldConstants::FIELD_WIDTH_YARDS; dy++) {
-                //This condition is for the top and bottom lines of the field, making sure they get rendered.
-                if (dy == y || dy == FieldConstants::FIELD_WIDTH_YARDS - 1) {
-                    bSprite.setPosition(sf::Vector2f(dx * FieldConstants::PIXEL_PER_YARD, dy * FieldConstants::PIXEL_PER_YARD));
-                    window.draw(bSprite);
-                } else if (dx % FieldConstants::YARDS_FOR_FIRST == 0) {
-                    bSprite.setPosition(sf::Vector2f(dx * FieldConstants::PIXEL_PER_YARD, dy * FieldConstants::PIXEL_PER_YARD));
-                    window.draw(bSprite);
-                }
-            }
+        sf::Sprite boundaryVSprite = boundaryVertical.getSpriteFromRectSize(boundary);
+        window.draw(boundaryVSprite);
+        boundaryVSprite.setPosition(sf::Vector2f(FieldConstants::ENTIRE_LENGTH_OF_FIELD_PX - FieldConstants::PIXEL_PER_YARD, this->y));
+        window.draw(boundaryVSprite);
 
+        double yardLineThickness = std::max(FieldConstants::PIXEL_PER_YARD / 5, 1);
+
+        util::Rectangle yardline = {this->x, this->y, yardLineThickness, FieldConstants::FIELD_WIDTH_PX};
+        sf::Sprite vSprite = yardline.getSpriteFromRectSize(boundary);
+        for (int dx = this->x + 1; dx < FieldConstants::ENTIRE_LENGTH_OF_FIELD / FieldConstants::YARDS_FOR_FIRST; dx++) {
+            vSprite.setPosition(sf::Vector2f(dx * FieldConstants::PIXEL_PER_YARD * FieldConstants::YARDS_FOR_FIRST, this->y));
+            window.draw(vSprite);
         }
     }
 };

@@ -20,10 +20,8 @@
 //Any position will be able to do anything.
 class PositionEntity : public Entity {
 public:
-    //TODO delete this, just place holder
-    static constexpr float SCALE = 3.f;
 
-    explicit PositionEntity(Emitter& emitter, Position primaryPosition) : primaryPosition(primaryPosition), emitter(emitter) {
+    explicit PositionEntity(Emitter& emitter, Position primaryPosition) : Entity(util::Rectangle(1, 2.056)), primaryPosition(primaryPosition), emitter(emitter) {
         std::string prefix = "../assets/texture/entity/position/";
 
         if (!dropbackTexture.loadFromFile(prefix + "qb.png")) {
@@ -34,12 +32,9 @@ public:
             Logger::error("Unable to load idle texture", typeid(*this));
         }
 
-        boundingBox.setWidth(16 * SCALE);
-        boundingBox.setHeight(16 * SCALE);
-
         //placeholder value for now.
-        this->rating.speed = 1;
-        this->rating.throwPower = 50;
+        this->rating.speed = 10;
+        this->rating.throwPower = 20;
     }
 
     //For inputs from a player controller
@@ -50,6 +45,8 @@ public:
         } else {
             Logger::warn("Attempted to throw a pass without a football", typeid(*this));
         }
+
+        setLookVec(pos.normalize());
     };
 
     void onDirectionalInput(const Vector2D& direction) {
@@ -93,6 +90,9 @@ public:
 
         //Creates a copy.
         this->route = std::move(route);
+
+        routeOrigin = nullptr;
+        routeStartPos = nullptr;
     }
 
     void tick(double dt) override {
@@ -124,9 +124,10 @@ public:
     }
 
     void render(double dt, sf::RenderWindow &window) override {
-        Vector2D pos = {x * FieldConstants::PIXEL_PER_YARD, y * FieldConstants::PIXEL_PER_YARD};
-        double x = pos.getX();
-        double y = pos.getY();
+        Vector2D pos = {x, y};
+
+        Vector2D scaledPos = FieldConstants::toPixels(pos);
+        util::Rectangle scaledBoundingBox = FieldConstants::toPixels(boundingBox);
 
         sf::Texture* toUse;
 
@@ -136,9 +137,7 @@ public:
             toUse = &idle;
         }
 
-        sf::Sprite self(*toUse);
-        self.setPosition(sf::Vector2f(x, y));
-        self.scale(sf::Vector2f(SCALE, SCALE));
+        sf::Sprite self = scaledBoundingBox.getSpriteFromRectangle(*toUse);
 
         if (route && state == RUN_ROUTE && !route->isRouteDone()) {
             if (!routeOrigin) {
@@ -150,12 +149,20 @@ public:
             routeOrigin = nullptr;
         }
 
-        window.draw(self);
+        if (Config::RENDER_TEXTURES) {
+            window.draw(self);
+        } else {
+            sf::RectangleShape dot = sf::RectangleShape(sf::Vector2f(6, 6));
+            dot.setFillColor(sf::Color::Red);
+            dot.setPosition(sf::Vector2f(FieldConstants::toPixels(this->x), FieldConstants::toPixels(this->y)));
+            window.draw(dot);
+        }
+
         if (Config::IS_DEBUG_MODE) {
-            Vector2D pos = {x, y};
-            (velocity + pos).render(window, pos, sf::Color::Blue);
-            (looking + pos).render(window, pos, sf::Color::Magenta);
-            boundingBox.render(window);
+            FieldConstants::toPixels(velocity + pos).renderPointed(window, scaledPos, sf::Color::Blue);
+            FieldConstants::toPixels(looking + pos).renderPointed(window, scaledPos, sf::Color::Magenta);
+
+            scaledBoundingBox.render(window);
         }
     }
 
@@ -210,11 +217,11 @@ private:
 
         Vector2D direction = destination.normalize();
 
-        looking = direction.multiply(FieldConstants::PIXEL_PER_YARD);
+        setLookVec(direction.multiply(2));
 
         setVelocity({rating.speed * direction.getX(), rating.speed * direction.getY()});
 
-        double range = 15;
+        double range = velocity.length() * dt;
         if (destination.length() <= range) {
             routeStartPos = nullptr;
             route->incrementRouteStep();

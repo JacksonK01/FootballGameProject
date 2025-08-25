@@ -26,11 +26,19 @@ public:
     void render(double dt, sf::RenderWindow& window, const Vector2D& origin) const {
         Vector2D current = origin;
 
+        int sizeTracker = 0;
         for (auto& step : path) {
             Vector2D relativeStep = step + current;
 
-            relativeStep.render(window, current);
+            sf::Color routeColor = sf::Color::Yellow;
+            if (sizeTracker < path.size() - 1) {
+                FieldConstants::toPixels(relativeStep).render(window, FieldConstants::toPixels(current), routeColor);
+            } else {
+                FieldConstants::toPixels(relativeStep).renderPointed(window, FieldConstants::toPixels(current), routeColor);
+            }
+
             current = relativeStep;
+            sizeTracker++;
         }
     }
 

@@ -11,7 +11,14 @@ namespace util {
 
     class Rectangle {
     public:
-        Rectangle(double x, double y, double width, double height) {
+        Rectangle(const double width, const double height) {
+            this->x = 0;
+            this->y = 0;
+            this->width = width;
+            this->height = height;
+        }
+
+        Rectangle(const double x, const double y, const double width, const double height) {
             this->x = x;
             this->y = y;
             this->width = width;
@@ -27,6 +34,20 @@ namespace util {
         void setY(const double& y) { this->y = y; }
         void setWidth(const double& width) { this->width = width; }
         void setHeight(const double& height) { this->height = height; }
+
+        [[nodiscard]] Rectangle inflate(double factor) const {
+            double newWidth  = width + factor;
+            double newHeight = height + factor;
+            double newX = x - factor * 0.5;
+            double newY = y - factor * 0.5;
+
+            return {newX, newY, newWidth, newHeight};
+        }
+
+        void centerToPos(const Vector2D& pos) {
+            this->x = pos.getX() - (width * 0.5);
+            this->y = pos.getY() - (height * 0.5);
+        }
 
         [[nodiscard]] bool intersects(const Rectangle& other) const {
             const bool doesOverlap =
@@ -47,6 +68,28 @@ namespace util {
             shape.setOutlineThickness(2.f);            // outline thickness
             shape.setPosition(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)));
             window.draw(shape);
+        }
+
+        //Created a sprite based on this rectangle, scaled with the rectangle
+        [[nodiscard]] sf::Sprite getSpriteFromRectangle(const sf::Texture& image) const {
+            sf::Sprite sprite(image);
+
+            sprite.setScale(sf::Vector2f(static_cast<float>(width) / image.getSize().x, static_cast<float>(height) / image.getSize().y));
+
+            sprite.setPosition(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)));
+
+            return std::move(sprite);
+        }
+
+        //Creates a sprite the size of rectangle
+        [[nodiscard]] sf::Sprite getSpriteFromRectSize(const sf::Texture& image) const {
+            sf::Sprite sprite(image);
+
+            sprite.setTextureRect(sf::IntRect(sf::Vector2(0, 0), sf::Vector2(static_cast<int>(width), static_cast<int>(height))));
+
+            sprite.setPosition(sf::Vector2f(static_cast<float>(this->x), static_cast<float>(this->y)));
+
+            return std::move(sprite);
         }
 
     private:

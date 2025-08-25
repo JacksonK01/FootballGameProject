@@ -75,7 +75,7 @@ private:
 
     double debugX = 0;
     double debugY = 0;
-    double debugSpeed = 6;
+    double debugSpeed = 3;
 
     void debugCamera() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
@@ -92,9 +92,7 @@ private:
         }
 
         //TODO this is just for testing. Don't leave this in here long term.
-        sf::View testing = sf::View(sf::FloatRect(sf::Vector2<float>(debugX, debugY), sf::Vector2<float>(WINDOW_WIDTH * 1.25, WINDOW_HEIGHT * 1.25)));
-        testing.setCenter({WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2});
-        testing.move(sf::Vector2<float>(debugX, debugY));
+        sf::View testing = sf::View(sf::FloatRect(sf::Vector2f(debugX, debugY), sf::Vector2f(WINDOW_WIDTH * 0.8, FieldConstants::FIELD_WIDTH_PX)));
         window.setView(testing);
     }
 };

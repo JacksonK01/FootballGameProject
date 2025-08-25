@@ -13,13 +13,14 @@ class Entity {
 public:
     virtual ~Entity() = default;
 
-    Entity() : x(0), y(0), boundingBox(x, y, 0, 0) {}
+    Entity() : boundingBox(x, y, 0, 0) {}
 
     Entity(double x, double y, const util::Rectangle& boundingBox) : x(x), y(y), boundingBox(boundingBox) {}
 
+    explicit Entity(const util::Rectangle& boundingBox) : boundingBox(boundingBox) {};
+
     virtual void tick(double dt) {
-        boundingBox.setX(this->x);
-        boundingBox.setY(this->y);
+        boundingBox.centerToPos({x, y});
     }
 
     virtual void render(double dt, sf::RenderWindow& window) = 0;
@@ -40,7 +41,7 @@ public:
 
 protected:
     //The x and y are stored in yards not pixels
-    double x, y;
+    double x = 0, y = 0;
     util::Rectangle boundingBox;
     Vector2D velocity;
     //Should always be normalized

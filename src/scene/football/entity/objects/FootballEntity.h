@@ -16,10 +16,7 @@ class PositionEntity;
 //A football's state will modify during a play and be reset once a play is over and the game moves to the next.
 class FootballEntity : public Entity {
 public:
-    //TODO delete this
-    static constexpr float SCALE = 2.f;
-
-    FootballEntity() : Entity(0, 0, {0, 0, 16 * SCALE, 8 * SCALE}) {
+    FootballEntity() : Entity({0.85, 0.65}) {
         if (!texture.loadFromFile("../assets/entity/Football.png")) {
             Logger::error("Football unable to load texture", typeid(*this));
         }
@@ -37,7 +34,7 @@ public:
                 distanceCache = directDestination.length();
             }
 
-            double range = 15;
+            double range = velocity.length() * dt;
             if (directDestination.length() <= range) {
                 //TODO gotta add a state machine to avoid code like this.
                 isGrounded = true;
@@ -51,8 +48,7 @@ public:
             } else {
                 Vector2D direction = directDestination.normalize();
 
-                int speedScale = 10.0;
-                double step = velocity.length() * speedScale * dt;
+                double step = velocity.length() * dt;
 
                 x += direction.getX() * step;
                 y += direction.getY() * step;
@@ -74,19 +70,30 @@ public:
             return;
         }
 
-        //texture size
-        float size = 16.f;
-        sf::Sprite ball(texture);
-        ball.setOrigin(sf::Vector2f(0.f, size / 2));
-        ball.setPosition(sf::Vector2f(x, y - z));
+        Vector2D pos = {x, y};
+        Vector2D scaledPos = FieldConstants::toPixels(pos);
+        util::Rectangle scaledBoundingBox = FieldConstants::toPixels(boundingBox);
 
-        ball.scale(sf::Vector2f(SCALE, SCALE));
+        sf::Sprite ball = scaledBoundingBox.getSpriteFromRectangle(texture);
+        ball.setPosition(sf::Vector2f(FieldConstants::toPixels(x), FieldConstants::toPixels(y - z)));
+
+        // sf::Angle stepAngle = sf::degrees(1);
+        // ball.rotate(stepAngle);
+
+        double degrees = std::atan2(looking.getY(), looking.getX()) * 180 / M_PI;
+
+        if (looking.getX() < 0) {
+            degrees += 180.0;
+        }
+
+        sf::Angle stepAngle = sf::degrees(degrees);
+        ball.setRotation(stepAngle);
 
         window.draw(ball);
 
         if (Config::IS_DEBUG_MODE) {
-            destination.render(window, {x, y});
-            boundingBox.render(window);
+            FieldConstants::toPixels(destination).render(window, scaledPos);
+            scaledBoundingBox.render(window);
         }
     };
 
