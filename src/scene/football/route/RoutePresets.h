@@ -2,10 +2,9 @@
 // Created by jkirc on 8/23/2025.
 //
 
-#ifndef ROUTEPRESETS_H
-#define ROUTEPRESETS_H
+#pragma once
+
 #include "Route.h"
-#include "../field/FieldConstants.h"
 
 //A route is in yards, not pixels
 class RoutePresets {
@@ -68,5 +67,3 @@ public:
         return sluggo;
     }
 };
-
-#endif //ROUTEPRESETS_H

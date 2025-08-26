@@ -23,8 +23,8 @@ add_executable(FootballGameProject
         src/scene/football/field/FootballField.h
         src/scene/football/controller/ControllerManager.h
         src/scene/football/team/Team.h
-        src/scene/football/team/DepthChart.h
-        src/scene/football/team/Roster.h
+        src/scene/football/team/roster/DepthChart.h
+        src/scene/football/team/roster/Roster.h
         src/scene/football/entity/positions/rating/Ratings.h
         src/scene/football/controller/PlayerController.h
         src/event/Event.h
@@ -52,7 +52,16 @@ add_executable(FootballGameProject
         src/event/events/football/entity/PassCaughtEvent.h
         src/scene/football/entity/positions/PositionEntityState.h
         src/scene/football/route/RoutePresets.h
-        src/scene/football/field/FieldPresets.h
+        src/scene/football/entity/positions/PositionEntity.cpp
+        src/scene/football/entity/objects/FootballEntity.cpp
+        src/scene/football/field/FootballField.cpp
+        src/scene/football/team/roster/Roster.cpp
+        src/scene/football/team/Team.cpp
+        src/scene/football/team/roster/DepthChart.cpp
+        src/scene/football/FootballScene.cpp
+        src/scene/football/camera/Camera.cpp
+        src/util/math/Vector2D.cpp
+        src/util/Rectangle.cpp
 )
 
 target_link_libraries(FootballGameProject PRIVATE sfml-graphics)

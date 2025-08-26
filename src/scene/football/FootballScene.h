@@ -2,10 +2,9 @@
 // Created by jkirc on 8/10/2025.
 //
 
-#ifndef FOOTBALLSCENE_H
-#define FOOTBALLSCENE_H
+#pragma once
+
 #include "../Scene.h"
-#include <SFML/Graphics.hpp>
 
 #include "../../event/EventBus.h"
 #include "camera/Camera.h"
@@ -75,19 +74,5 @@ private:
     //Used so the input can compound
     Vector2D direction;
 
-    void registerEvents() {
-        eventBus.subscribe<PassCaughtEvent>([this](PassCaughtEvent& event) {
-            player1.setLinkedEntity(event.wr);
-        });
-
-        eventBus.subscribe<ThrownPassEvent>([this](ThrownPassEvent& event) {
-            camera.setFollowEntity(&event.football);
-        });
-
-        eventBus.subscribe<PassCaughtEvent>([this](PassCaughtEvent& event) {
-            camera.setFollowEntity(event.wr);
-        });
-    }
+    void registerEvents();
 };
-
-#endif //FOOTBALLSCENE_H

@@ -2,8 +2,8 @@
 // Created by jkirc on 8/18/2025.
 //
 
-#ifndef FIELDCONSTANTS_H
-#define FIELDCONSTANTS_H
+#pragma once
+
 #include "../../../util/Rectangle.h"
 
 class FieldConstants {
@@ -44,5 +44,3 @@ public:
         return {pixels.getX() / PIXEL_PER_YARD, pixels.getY() / PIXEL_PER_YARD, pixels.getWidth() / PIXEL_PER_YARD, pixels.getHeight() / PIXEL_PER_YARD};
     }
 };
-
-#endif //FIELDCONSTANTS_H

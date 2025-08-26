@@ -2,8 +2,7 @@
 // Created by jkirc on 8/10/2025.
 //
 
-#ifndef DEMANGLE_H
-#define DEMANGLE_H
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -23,4 +22,3 @@ public:
     }
 };
 
-#endif //DEMANGLE_H

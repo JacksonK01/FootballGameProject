@@ -2,15 +2,15 @@
 // Created by jkirc on 8/12/2025.
 //
 
-#ifndef FOOTBALLHITGROUNDEVENT_H
-#define FOOTBALLHITGROUNDEVENT_H
+#pragma once
+
 #include "../../../Event.h"
-#include "../../../../scene/football/entity/objects/FootballEntity.h"
+
+class FootballEntity;
+class PositionEntity;
 
 struct FootballHitGroundEvent : Event {
     explicit FootballHitGroundEvent(FootballEntity& football, PositionEntity* thrower) : football(football), thrower(thrower) {};
     FootballEntity& football;
     PositionEntity* thrower;
 };
-
-#endif //FOOTBALLHITGROUNDEVENT_H

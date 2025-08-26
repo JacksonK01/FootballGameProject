@@ -1,9 +1,15 @@
-#ifndef VECTOR2D_H
-#define VECTOR2D_H
+#pragma once
 
 #include <cmath>
 #include <ostream>
 #include <stdexcept>
+
+namespace sf {
+    class RenderWindow;
+    class CircleShape;
+    class ConvexShape;
+    class Color;
+}
 
 //Credit: ChatGTP generated this for me
 class Vector2D {
@@ -95,69 +101,11 @@ public:
         return Vector2D(0.0, 1.0);
     }
 
-    void render(sf::RenderWindow& window, const Vector2D& origin) const {
-        render(window, origin, sf::Color::Red);
-    }
+    void render(sf::RenderWindow& window, const Vector2D& origin) const;
 
-    void render(sf::RenderWindow& window, const Vector2D& origin, const sf::Color& color) const {
-        // line from origin → tip
-        sf::Vertex line[] = {
-            sf::Vertex(sf::Vector2f(static_cast<float>(origin.getX()), static_cast<float>(origin.getY())), color),
-            sf::Vertex(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)), color)
-        };
+    void render(sf::RenderWindow& window, const Vector2D& origin, const sf::Color& color) const;
 
-        window.draw(line, 2, sf::PrimitiveType::Lines);
-
-        // circle at the tip
-        float radius = 5.0f;
-        sf::CircleShape tip(radius);
-        tip.setFillColor(color);
-
-        // center the circle on the tip
-        tip.setOrigin(sf::Vector2f(radius, radius));
-        tip.setPosition(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)));
-
-        window.draw(tip);
-    }
-
-    void renderPointed(sf::RenderWindow& window, const Vector2D& origin, const sf::Color& color) const {
-        // Draw line from origin → tip
-        sf::Vertex line[] = {
-            sf::Vertex(sf::Vector2f(static_cast<float>(origin.getX()), static_cast<float>(origin.getY())), color),
-            sf::Vertex(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)), color)
-        };
-        window.draw(line, 2, sf::PrimitiveType::Lines);
-
-        // Draw arrowhead as a small triangle
-        float arrowSize = 10.0f; // length of arrowhead
-        float arrowWidth = 6.0f; // width of the base
-
-        // Compute the direction vector from origin to tip
-        sf::Vector2f dir(static_cast<float>(x - origin.getX()), static_cast<float>(y - origin.getY()));
-        float length = std::sqrt(dir.x * dir.x + dir.y * dir.y);
-        if (length == 0) return; // avoid division by zero
-
-        // Normalize direction
-        dir.x /= length;
-        dir.y /= length;
-
-        // Perpendicular vector for width
-        sf::Vector2f perp(-dir.y, dir.x);
-
-        // Compute the three points of the triangle
-        sf::Vector2f tip(static_cast<float>(x), static_cast<float>(y));
-        sf::Vector2f left = tip - dir * arrowSize + perp * (arrowWidth / 2.0f);
-        sf::Vector2f right = tip - dir * arrowSize - perp * (arrowWidth / 2.0f);
-
-        sf::ConvexShape arrowHead;
-        arrowHead.setPointCount(3);
-        arrowHead.setPoint(0, tip);
-        arrowHead.setPoint(1, left);
-        arrowHead.setPoint(2, right);
-        arrowHead.setFillColor(color);
-
-        window.draw(arrowHead);
-    }
+    void renderPointed(sf::RenderWindow& window, const Vector2D& origin, const sf::Color& color) const;
 
     // Output stream (friend function)
     friend std::ostream& operator<<(std::ostream& os, const Vector2D& vec) {
@@ -165,5 +113,3 @@ public:
         return os;
     }
 };
-
-#endif // VECTOR2D_H

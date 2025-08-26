@@ -2,12 +2,14 @@
 // Created by jkirc on 8/19/2025.
 //
 
-#ifndef ROUTE_H
-#define ROUTE_H
+#pragma once
+
 #include <vector>
 
 #include "../../../util/math/Vector2D.h"
 #include "SFML/Graphics/RenderWindow.hpp"
+#include "../field/FieldConstants.h"
+#include "../../../src/util/Logger.h"
 
 //Basically just contains vectors.
 //Routes are stored in yards, not pixels.
@@ -63,4 +65,3 @@ protected:
     bool isContinuous = false;
 };
 
-#endif //ROUTE_H

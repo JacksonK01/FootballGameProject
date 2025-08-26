@@ -1,10 +1,9 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#pragma once
+
 #include <string>
 #include <iostream>
 #include <windows.h>
 #include <cxxabi.h>
-#include <memory>
 #include <typeinfo>
 
 #include "Demangler.h"
@@ -80,4 +79,3 @@ public:
     }
 };
 
-#endif //LOGGER_H

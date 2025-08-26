@@ -2,11 +2,14 @@
 // Created by jkirc on 8/10/2025.
 //
 
-#ifndef ENTITY_H
-#define ENTITY_H
+#pragma once
 
-#include "../../../util/Rectangle.h"
-#include "SFML/Graphics/RenderWindow.hpp"
+#include "../../../src/util/math/Vector2D.h"
+#include "../../../src/util/Rectangle.h"
+
+namespace sf {
+    class RenderWindow;
+}
 
 // Bases for every entity, like QBs and RBs and the football itself.
 class Entity {
@@ -48,4 +51,3 @@ protected:
     Vector2D looking;
 };
 
-#endif // ENTITY_H

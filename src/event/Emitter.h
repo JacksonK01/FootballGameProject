@@ -5,7 +5,7 @@
 #ifndef EMITTER_H
 #define EMITTER_H
 #include "Event.h"
-
+#include "functional"
 
 //This will be used to be passed down to objects that can't register events, but can emit them.
 class Emitter {

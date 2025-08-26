@@ -2,8 +2,8 @@
 // Created by jkirc on 8/10/2025.
 //
 
-#ifndef PLAYERCONTROLLER_H
-#define PLAYERCONTROLLER_H
+#pragma once
+
 #include "Controller.h"
 #include "../../../util/Logger.h"
 #include "../../../util/math/Vector2D.h"
@@ -41,5 +41,3 @@ private:
     //Player will be linked to an entity to control
     PositionEntity* linkedEntity = nullptr;
 };
-
-#endif //PLAYERCONTROLLER_H
