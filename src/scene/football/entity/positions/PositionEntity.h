@@ -21,7 +21,7 @@
 class PositionEntity : public Entity {
 public:
 
-    explicit PositionEntity(Emitter& emitter, Position primaryPosition) : Entity(util::Rectangle(1, 2.056)), primaryPosition(primaryPosition), emitter(emitter) {
+    explicit PositionEntity(Emitter& emitter, Position primaryPosition) : Entity(util::Rectangle(1.8, 2.9)), primaryPosition(primaryPosition), emitter(emitter) {
         std::string prefix = "../assets/texture/entity/position/";
 
         if (!dropbackTexture.loadFromFile(prefix + "qb.png")) {
@@ -33,8 +33,8 @@ public:
         }
 
         //placeholder value for now.
-        this->rating.speed = 10;
-        this->rating.throwPower = 20;
+        this->rating.speed = 12;
+        this->rating.throwPower = 25;
     }
 
     //For inputs from a player controller

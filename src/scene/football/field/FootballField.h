@@ -53,7 +53,22 @@ public:
         wr->setX(x);
         wr->setY(y / 2);
 
-        wr->runRoute(RoutePresets::post());
+        int totalRoutesAddedToGame = 7;
+        // Random route selection
+        int routeIndex = std::rand() % totalRoutesAddedToGame;
+        Route selectedRoute;
+
+        switch (routeIndex) {
+            case 0: selectedRoute = RoutePresets::dig(); break;
+            case 1: selectedRoute = RoutePresets::zig(); break;
+            case 2: selectedRoute = RoutePresets::post(); break;
+            case 3: selectedRoute = RoutePresets::corner(); break;
+            case 4: selectedRoute = RoutePresets::postCorner(); break;
+            case 5: selectedRoute = RoutePresets::drag(); break;
+            default: selectedRoute = RoutePresets::go(); break;
+        }
+
+        wr->runRoute(selectedRoute);
     }
 
     void tick(double dt) {
@@ -128,7 +143,7 @@ private:
             football.setX(qb.getX());
             football.setY(qb.getY());
 
-            football.setVelocity(velocity);
+            football.setVelocity(velocity + qb.getVelocity().getAbs());
             football.setDestination(dest);
             football.isVisible(true);
             football.setLookVec((dest - Vector2D(qb.getX(), qb.getY())).normalize());

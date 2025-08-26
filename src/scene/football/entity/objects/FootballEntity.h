@@ -16,7 +16,7 @@ class PositionEntity;
 //A football's state will modify during a play and be reset once a play is over and the game moves to the next.
 class FootballEntity : public Entity {
 public:
-    FootballEntity() : Entity({0.85, 0.65}) {
+    FootballEntity() : Entity({1.25, 1.35}) {
         if (!texture.loadFromFile("../assets/entity/Football.png")) {
             Logger::error("Football unable to load texture", typeid(*this));
         }
@@ -24,7 +24,6 @@ public:
 
     void tick(double dt) override {
         Entity::tick(dt);
-
 
         if (isThrown) {
             Vector2D currentPos = Vector2D(x, y);
@@ -77,17 +76,17 @@ public:
         sf::Sprite ball = scaledBoundingBox.getSpriteFromRectangle(texture);
         ball.setPosition(sf::Vector2f(FieldConstants::toPixels(x), FieldConstants::toPixels(y - z)));
 
-        // sf::Angle stepAngle = sf::degrees(1);
-        // ball.rotate(stepAngle);
-
         double degrees = std::atan2(looking.getY(), looking.getX()) * 180 / M_PI;
 
         if (looking.getX() < 0) {
             degrees += 180.0;
         }
 
-        sf::Angle stepAngle = sf::degrees(degrees);
-        ball.setRotation(stepAngle);
+        //Will angle the football if it's outside a 120 degree cone
+        if (-RANGE_IN_DEGREES > degrees || degrees > RANGE_IN_DEGREES) {
+            sf::Angle stepAngle = sf::degrees(degrees);
+            ball.setRotation(stepAngle);
+        }
 
         window.draw(ball);
 
@@ -126,6 +125,8 @@ public:
     }
 
 private:
+    static constexpr int RANGE_IN_DEGREES = 60;
+
     double z = 0;
 
     //TODO fix magic numbers here

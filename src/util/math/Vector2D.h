@@ -49,6 +49,10 @@ public:
         if (len == 0.0) return Vector2D(0.0, 0.0);
         return Vector2D(x / len, y / len);
     }
+    [[nodiscard]] Vector2D getAbs() {
+        return {std::abs(x), std::abs(y)};
+    }
+
     double dot(const Vector2D& other) const {
         return x * other.x + y * other.y;
     }
