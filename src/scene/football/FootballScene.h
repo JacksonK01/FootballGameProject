@@ -8,13 +8,14 @@
 #include <SFML/Graphics.hpp>
 
 #include "../../event/EventBus.h"
+#include "camera/Camera.h"
 #include "controller/PlayerController.h"
 #include "field/FootballField.h"
 
 //Add events to prevent too much cross object coupling.
 class FootballScene : public Scene {
 public:
-    explicit FootballScene(sf::RenderWindow& window) : Scene(window), eventBus(), field(eventBus), player1(nullptr) {
+    explicit FootballScene(sf::RenderWindow& window) : Scene(window), eventBus(), field(eventBus), player1(nullptr), camera(field) {
         inputManager.createKeyPressedEvent(sf::Keyboard::Key::W, [this]() {
             direction = direction + Vector2D(0, -1);
         });
@@ -40,10 +41,9 @@ public:
         });
 
         player1.setLinkedEntity(field.getTeamOffense().getDepthChart().getStartingQB());
+        camera.setFollowEntity(field.getTeamOffense().getDepthChart().getStartingQB());
 
-        eventBus.subscribe<PassCaughtEvent>([this](PassCaughtEvent& event) {
-            player1.setLinkedEntity(event.wr);
-        });
+        registerEvents();
     };
 
     void tick(double dt) override {
@@ -59,6 +59,7 @@ public:
 
     void render(double dt, sf::RenderWindow& window) override {
         field.render(dt, window);
+        camera.render(dt, window);
     }
 
     void mousePressed(sf::Mouse::Button button, const Vector2D& pos) override {
@@ -69,9 +70,24 @@ private:
     EventBus eventBus;
     FootballField field;
     PlayerController player1;
+    Camera camera;
 
     //Used so the input can compound
     Vector2D direction;
+
+    void registerEvents() {
+        eventBus.subscribe<PassCaughtEvent>([this](PassCaughtEvent& event) {
+            player1.setLinkedEntity(event.wr);
+        });
+
+        eventBus.subscribe<ThrownPassEvent>([this](ThrownPassEvent& event) {
+            camera.setFollowEntity(&event.football);
+        });
+
+        eventBus.subscribe<PassCaughtEvent>([this](PassCaughtEvent& event) {
+            camera.setFollowEntity(event.wr);
+        });
+    }
 };
 
 #endif //FOOTBALLSCENE_H

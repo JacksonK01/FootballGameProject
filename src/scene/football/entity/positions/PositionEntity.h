@@ -40,7 +40,7 @@ public:
     //For inputs from a player controller
     void onMouseClicked(const Vector2D& pos) {
         if (doesHaveFootball()) {
-            ThrownPassEvent event = ThrownPassEvent(*this, pos);
+            ThrownPassEvent event = ThrownPassEvent(*this, getFootball(), pos);
             emitter.emit(event);
         } else {
             Logger::warn("Attempted to throw a pass without a football", typeid(*this));
@@ -97,6 +97,12 @@ public:
 
     void tick(double dt) override {
         Entity::tick(dt);
+
+        //TODO remove, only here for camera logic
+        if (doesHaveFootball()) {
+            getFootball().setX(x);
+            getFootball().setY(y);
+        }
 
         const double step = velocity.length() * dt;
         const Vector2D direction = velocity.normalize();

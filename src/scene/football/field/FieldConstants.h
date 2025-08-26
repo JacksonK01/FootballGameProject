@@ -4,6 +4,7 @@
 
 #ifndef FIELDCONSTANTS_H
 #define FIELDCONSTANTS_H
+#include "../../../util/Rectangle.h"
 
 class FieldConstants {
 public:

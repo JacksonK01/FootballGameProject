@@ -92,7 +92,7 @@ private:
         }
 
         //TODO this is just for testing. Don't leave this in here long term.
-        sf::View testing = sf::View(sf::FloatRect(sf::Vector2f(debugX, debugY), sf::Vector2f(WINDOW_WIDTH * 0.8, FieldConstants::FIELD_WIDTH_PX + FieldConstants::PIXEL_PER_YARD)));
+        sf::View testing = sf::View(sf::FloatRect(sf::Vector2f(debugX, debugY), sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT)));
         window.setView(testing);
     }
 };

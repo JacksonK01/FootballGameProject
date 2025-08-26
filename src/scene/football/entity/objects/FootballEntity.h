@@ -124,6 +124,10 @@ public:
         return owner;
     }
 
+    bool doesHaveOwner() const {
+        return owner;
+    }
+
 private:
     static constexpr int RANGE_IN_DEGREES = 60;
 

@@ -20,7 +20,7 @@ public:
         Route dig = Route(false);
         dig.addStep(Vector2D(30, 0));
         dig.addStep(Vector2D(1, 2));
-        dig.addStep(Vector2D(0, 35));
+        dig.addStep(Vector2D(0, 30));
         return dig;
     }
 
@@ -34,7 +34,7 @@ public:
     static Route post() {
         Route post = Route(true);
         post.addStep(Vector2D(25, 0));
-        post.addStep(Vector2D(25, 25));
+        post.addStep(Vector2D(25, 15));
         return post;
     }
 
@@ -58,6 +58,14 @@ public:
         drag.addStep(Vector2D(2, 2));
         drag.addStep(Vector2D(0, 35));
         return drag;
+    }
+
+    static Route sluggo() {
+        Route sluggo = Route(true);
+        sluggo.addStep(Vector2D(4, 0));
+        sluggo.addStep(Vector2D(1, 4));
+        sluggo.addStep(Vector2D(30, -3));
+        return sluggo;
     }
 };
 

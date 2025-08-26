@@ -53,7 +53,7 @@ public:
         wr->setX(x);
         wr->setY(y / 2);
 
-        int totalRoutesAddedToGame = 7;
+        int totalRoutesAddedToGame = 8;
         // Random route selection
         int routeIndex = std::rand() % totalRoutesAddedToGame;
         Route selectedRoute;
@@ -65,6 +65,7 @@ public:
             case 3: selectedRoute = RoutePresets::corner(); break;
             case 4: selectedRoute = RoutePresets::postCorner(); break;
             case 5: selectedRoute = RoutePresets::drag(); break;
+            case 6: selectedRoute = RoutePresets::sluggo(); break;
             default: selectedRoute = RoutePresets::go(); break;
         }
 
