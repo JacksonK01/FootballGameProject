@@ -2,8 +2,8 @@
 // Created by jkirc on 8/11/2025.
 //
 
-#ifndef EMITTER_H
-#define EMITTER_H
+#pragma once
+
 #include "Event.h"
 #include "functional"
 
@@ -19,5 +19,3 @@ public:
 private:
     EmitFunc emitter;
 };
-
-#endif //EMITTER_H

@@ -42,9 +42,9 @@ add_executable(FootballGameProject
         src/config/Config.h
         src/scene/football/team/playcalling/Play.cpp
         src/scene/football/team/playcalling/Play.h
-        src/scene/football/team/playcalling/Formation.cpp
-        src/scene/football/team/playcalling/Formation.h
-        src/scene/football/team/playcalling/FormationSlot.h
+        src/scene/football/team/playcalling/formation/Formation.cpp
+        src/scene/football/team/playcalling/formation/Formation.h
+        src/scene/football/team/playcalling/formation/FormationSlot.h
         src/scene/football/util/FormationType.h
         src/scene/football/camera/Camera.h
         src/scene/football/field/FieldConstants.h
@@ -62,6 +62,7 @@ add_executable(FootballGameProject
         src/scene/football/camera/Camera.cpp
         src/util/math/Vector2D.cpp
         src/util/Rectangle.cpp
+        src/scene/football/team/playcalling/formation/presets/GunFormationPresets.h
 )
 
 target_link_libraries(FootballGameProject PRIVATE sfml-graphics)

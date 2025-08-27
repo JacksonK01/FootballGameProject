@@ -11,6 +11,8 @@
 #include "../../../event/events/football/entity/ThrownPassEvent.h"
 #include "../route/RoutePresets.h"
 #include "FieldConstants.h"
+#include "../team/playcalling/formation/Formation.h"
+#include "../team/playcalling/formation/presets/GunFormationPresets.h"
 #include "SFML/Graphics/Sprite.hpp"
 
 FootballField::FootballField(EventBus &eventBus) : eventBus(eventBus), team1(eventBus), team2(eventBus) {
@@ -30,8 +32,8 @@ FootballField::FootballField(EventBus &eventBus) : eventBus(eventBus), team1(eve
     registerEvents(eventBus);
 
     football.isVisible(false);
-    getTeamOffense().getDepthChart().getStartingQB()->giveFootball(&football);
 
+    getTeamOffense().getDepthChart().getStartingQB()->giveFootball(&football);
     snapBall();
 };
 
@@ -39,31 +41,31 @@ void FootballField::snapBall() {
     double x = this->x + FieldConstants::YARDS_FOR_FIRST * 2;
     double y = this->y + (FieldConstants::FIELD_WIDTH_YARDS / 2);
 
-    auto* qb = getTeamOffense().getDepthChart().getStartingQB();
-    qb->setX(x);
-    qb->setY(y);
+    Formation gun = GunFormationPresets::getGunBase();
+    DepthChart& depth = getTeamOffense().getDepthChart();
+    gun.alignPlayers(depth, {x, y}, true);
 
-    auto* wr = getTeamOffense().getDepthChart().getWR(0);
-    wr->setX(x);
-    wr->setY(y - 12);
+    auto* wr1 = depth.getWR(0);
+    auto* wr2 = depth.getWR(1);
+    auto* wr3 = depth.getWR(2);
 
-    int totalRoutesAddedToGame = 8;
-    // Random route selection
-    int routeIndex = std::rand() % totalRoutesAddedToGame;
-    Route selectedRoute;
+    auto r1 = RoutePresets::random();
+    auto r2 = RoutePresets::random();
+    auto r3 = RoutePresets::random();
 
-    switch (routeIndex) {
-        case 0: selectedRoute = RoutePresets::dig(); break;
-        case 1: selectedRoute = RoutePresets::zig(); break;
-        case 2: selectedRoute = RoutePresets::post(); break;
-        case 3: selectedRoute = RoutePresets::corner(); break;
-        case 4: selectedRoute = RoutePresets::postCorner(); break;
-        case 5: selectedRoute = RoutePresets::drag(); break;
-        case 6: selectedRoute = RoutePresets::sluggo(); break;
-        default: selectedRoute = RoutePresets::go(); break;
+    // Make sure r2 is not equal to r1
+    while (r2 == r1) {
+        r2 = RoutePresets::random();
     }
 
-    wr->runRoute(selectedRoute);
+    // Make sure r3 is not equal to r1 or r2
+    while (r3 == r1 || r3 == r2) {
+        r3 = RoutePresets::random();
+    }
+
+    wr1->runRoute(r1);
+    wr2->runRoute(r2);
+    wr3->runRoute(r3);
 }
 
 void FootballField::tick(double dt) {
@@ -80,10 +82,21 @@ void FootballField::render(double dt, sf::RenderWindow &window) {
     renderGrassLayer(dt, window);
     renderBoundariesLayer(dt, window);
 
-    team1.getDepthChart().getStartingQB()->render(dt, window);
-    team1.getDepthChart().getWR(0)->render(dt, window);
+    getTeamOffense().render(dt, window);
     football.render(dt, window);
 }
+
+PositionEntity *FootballField::collisionCheck(const util::Rectangle& hitbox) {
+
+    for (auto* entity : getTeamOffense().getDepthChart().getOnFieldPlayers()) {
+        if (entity->getBoundingBox().intersects(hitbox)) {
+            return entity;
+        }
+    }
+
+    return nullptr;
+}
+
 
 //Private methods
 
@@ -93,8 +106,7 @@ void FootballField::playCallingState(double dt) {
 }
 
 void FootballField::snappedBallState(double dt) {
-    team1.getDepthChart().getStartingQB()->tick(dt);
-    team1.getDepthChart().getWR(0)->tick(dt);
+    getTeamOffense().tick(dt);
     football.tick(dt);
 
     if (football.isOnGround()) {
@@ -132,14 +144,10 @@ void FootballField::registerEvents(EventBus &eventBus) {
 
         const util::Rectangle& box = football.getBoundingBox().inflate(1);
 
-        auto* wr = getTeamOffense().getDepthChart().getWR(0);
-        auto* qb = getTeamOffense().getDepthChart().getStartingQB();
+        auto* collisionEntity = collisionCheck(box);
 
-        if (wr->getBoundingBox().intersects(box)) {
-            auto catchEvent = PassCaughtEvent(wr, football);
-            this->eventBus.emit(catchEvent);
-        } else if (qb->getBoundingBox().intersects(box)) {
-            auto catchEvent = PassCaughtEvent(qb, football);
+        if (collisionEntity) {
+            auto catchEvent = PassCaughtEvent(collisionEntity, football);
             this->eventBus.emit(catchEvent);
         } else {
             event.thrower->giveFootball(&football);

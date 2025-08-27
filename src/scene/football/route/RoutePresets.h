@@ -66,4 +66,21 @@ public:
         sluggo.addStep(Vector2D(30, -3));
         return sluggo;
     }
+
+    static Route random(int offset = 0) {
+        int totalRoutesAddedToGame = 8 + offset;
+        // Random route selection
+        int routeIndex = std::rand() % totalRoutesAddedToGame;
+
+        switch (routeIndex) {
+            case 0: return dig();
+            case 1: return zig();
+            case 2: return post();
+            case 3: return corner();
+            case 4: return postCorner();
+            case 5: return drag();
+            case 6: return sluggo();
+            default: return go();
+        }
+    }
 };

@@ -14,5 +14,15 @@ void Team::playcall() {
 
 }
 
+void Team::tick(double dt) {
+    depthChart.tick(dt);
+}
+
+void Team::render(double dt, sf::RenderWindow &window) {
+    depthChart.render(dt, window);
+}
+
+
+
 
 

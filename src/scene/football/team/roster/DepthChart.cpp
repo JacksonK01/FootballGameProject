@@ -21,11 +21,43 @@ PositionEntity *DepthChart::getStartingQB() {
 }
 
 PositionEntity *DepthChart::getWR(int i)  {
-    if (0 < i && i < depth[WR].size()) {
-        Logger::error("This WR doesn't exist", typeid(*this));
-    }
+    doesDepthExist(WR, i);
     return depth[WR][i];
 }
+
+PositionEntity *DepthChart::getPosition(Position position, int i) {
+    doesDepthExist(position, i);
+    return depth[position][i];
+}
+
+bool DepthChart::doesDepthExist(Position position, int at) {
+    if (0 <= at && at < depth[position].size()) {
+        return true;
+    }
+
+    Logger::error("This depth doesn't exist", typeid(*this));
+    return true;
+}
+
+void DepthChart::tick(double dt) {
+
+    for (auto* entity : onFieldPlayers) {
+        entity->tick(dt);
+    }
+
+}
+
+void DepthChart::render(double dt, sf::RenderWindow &window) {
+
+    for (auto* entity : onFieldPlayers) {
+        entity->render(dt, window);
+    }
+
+}
+
+
+
+
 
 
 

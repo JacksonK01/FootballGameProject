@@ -59,6 +59,11 @@ public:
 
     void resetStep() { step = 0; }
 
+    bool operator==(const Route& other) const {
+        return this->isContinuous == other.isContinuous &&
+               this->path == other.path;
+    }
+
 protected:
     std::vector<Vector2D> path = std::vector<Vector2D>();
     int step = 0;

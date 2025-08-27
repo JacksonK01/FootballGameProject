@@ -2,8 +2,8 @@
 // Created by jkirc on 8/10/2025.
 //
 
-#ifndef CONTROLLER_H
-#define CONTROLLER_H
+#pragma once
+
 #include "../entity/positions/PositionEntity.h"
 #include "../field/FootballField.h"
 
@@ -19,5 +19,3 @@ public:
     virtual void tick(double dt, PositionEntity& user, FootballField& field) = 0;
 
 };
-
-#endif //CONTROLLER_H

@@ -2,8 +2,8 @@
 // Created by jkirc on 8/10/2025.
 //
 
-#ifndef EVENTBUS_H
-#define EVENTBUS_H
+#pragma once
+
 #include <functional>
 #include <map>
 #include <string>
@@ -65,5 +65,3 @@ private:
     //This is to hand out. Stored so it's not put out of scope in memory.
     Emitter emitter = Emitter([this](Event& e) { this->emit(e); });
 };
-
-#endif //EVENTBUS_H

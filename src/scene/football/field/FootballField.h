@@ -13,6 +13,7 @@ namespace sf {
 }
 
 class EventBus;
+class PositionEntity;
 
 //Class for storing who's on the field, who is where, houses each player in one place.
 //Possibly should house interaction logic between players? Will decide later.
@@ -32,6 +33,8 @@ public:
     Team& getTeamOffense() { return team1; }
 
     Vector2D getPos() const { return {this->x, this->y}; }
+
+    PositionEntity* collisionCheck(const util::Rectangle& hitbox);
 
 private:
     EventBus& eventBus;

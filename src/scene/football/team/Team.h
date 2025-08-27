@@ -18,6 +18,9 @@ public:
     //gets called on when it's time to get a play up and going.
     void playcall();
 
+    void tick(double dt);
+    void render(double dt, sf::RenderWindow& window);
+
 private:
     Roster roster;
     DepthChart depthChart;
