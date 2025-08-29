@@ -43,7 +43,7 @@ void FootballField::snapBall() {
 
     Formation gun = GunFormationPresets::getGunBase();
     DepthChart& depth = getTeamOffense().getDepthChart();
-    gun.alignPlayers(depth, {x, y}, true);
+    gun.alignPlayers(depth, *this, {x, y}, false);
 
     auto* wr1 = depth.getWR(0);
     auto* wr2 = depth.getWR(1);
@@ -97,7 +97,6 @@ PositionEntity *FootballField::collisionCheck(const util::Rectangle& hitbox) {
     return nullptr;
 }
 
-
 //Private methods
 
 void FootballField::playCallingState(double dt) {
@@ -144,9 +143,7 @@ void FootballField::registerEvents(EventBus &eventBus) {
 
         const util::Rectangle& box = football.getBoundingBox().inflate(1);
 
-        auto* collisionEntity = collisionCheck(box);
-
-        if (collisionEntity) {
+        if (auto* collisionEntity = collisionCheck(box)) {
             auto catchEvent = PassCaughtEvent(collisionEntity, football);
             this->eventBus.emit(catchEvent);
         } else {

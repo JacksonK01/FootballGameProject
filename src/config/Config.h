@@ -7,7 +7,7 @@
 
 class Config {
 public:
-    static constexpr bool IS_DEBUG_MODE = false;
+    static constexpr bool IS_DEBUG_MODE = true;
     static constexpr bool RENDER_TEXTURES = true;
 };
 

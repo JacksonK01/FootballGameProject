@@ -40,6 +40,8 @@ public:
 
     Position getPosition() { return primaryPosition; }
 
+    Vector2D getPos() { return {x, y}; }
+
     void setState(const PositionEntityState& state) { this->state = state; }
 
     void runRoute(const Route& route);

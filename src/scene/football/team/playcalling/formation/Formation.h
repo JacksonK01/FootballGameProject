@@ -14,13 +14,14 @@
 
 class DepthChart;
 class Vector2D;
+class FootballField;
 
 //Like Route class, a custom formation can be created whenever, but there will be presets
 class Formation {
 public:
     static constexpr int MAX_PLAYERS_ON_FIELD = 11;
 
-    explicit Formation(const FormationType& type): formationSlots{}, type(type) {}
+    explicit Formation(const FormationType& type): type(type) {}
 
     void addFormationSlot(const Position& position, const FormationSlot& slot) {
         if (getTotalAmountOfSlots() > MAX_PLAYERS_ON_FIELD) {
@@ -43,10 +44,10 @@ public:
     }
 
     //It is not the formation's job to make sure this depth chart is proper.
-    void alignPlayers(DepthChart& depthChart, const Vector2D& origin, const bool& isLeftToRight);
+    void alignPlayers(DepthChart& depthChart, FootballField& field, const Vector2D& origin, const bool& isLeftToRight);
 
 private:
-    std::map<Position, std::vector<FormationSlot>> formationSlots;
+    std::map<Position, std::vector<FormationSlot>> formationSlots = {};
     FormationType type;
 
     int getTotalAmountOfSlots() const {
@@ -58,4 +59,5 @@ private:
 
         return size;
     }
+    Vector2D calculatePosition(const FormationSlot& slot, const FootballField& field, const Vector2D &origin);
 };

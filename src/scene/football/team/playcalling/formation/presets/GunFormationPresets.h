@@ -4,17 +4,18 @@
 
 #pragma once
 #include "../Formation.h"
+#include "../FormationSlot.h"
 
 class GunFormationPresets {
 public:
     static Formation getGunBase() {
         Formation gun = Formation(GUN);
 
-        gun.addFormationSlot(QB, FormationSlot(4, 0, false));
+        gun.addFormationSlot(QB, FormationSlot(HorizontalAlignment::ORIGIN, DepthAlignment::QB_GUN, {5, 0}, true));
 
-        gun.addFormationSlot(WR, FormationSlot(0, 12, true));
-        gun.addFormationSlot(WR, FormationSlot(1, -7, true));
-        gun.addFormationSlot(WR, FormationSlot(0, -14, true));
+        gun.addFormationSlot(WR, FormationSlot(HorizontalAlignment::LEFT_NUMBERS, DepthAlignment::LOS,true));
+        // gun.addFormationSlot(WR, FormationSlot(HorizontalAlignment::RIGHT_NUMBERS, DepthAlignment::LOS, true));
+        // gun.addFormationSlot(WR, FormationSlot(HorizontalAlignment::RIGHT_SLOT, DepthAlignment::SLOT, true));
 
         return gun;
     }

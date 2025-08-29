@@ -38,7 +38,8 @@ void PositionEntity::onMouseClicked(const Vector2D &pos) {
         Logger::warn("Attempted to throw a pass without a football", typeid(*this));
     }
 
-    setLookVec(pos.normalize());
+    const Vector2D lookVec = (pos - getPos()).normalize();
+    setLookVec(lookVec);
 };
 
 void PositionEntity::onDirectionalInput(const Vector2D &direction) {
@@ -177,13 +178,13 @@ void PositionEntity::runRoute(double dt) {
         routeStartPos = new Vector2D(x, y);
     }
 
-    Vector2D currentPos = {x, y};
+    const Vector2D currentPos = {x, y};
 
-    Vector2D destination = (route->getRouteStep() + *routeStartPos) - currentPos;
+    const Vector2D destination = (route->getRouteStep() + *routeStartPos) - currentPos;
 
-    Vector2D direction = destination.normalize();
+    const Vector2D direction = destination.normalize();
 
-    setLookVec(direction.multiply(2));
+    setLookVec(direction);
 
     setVelocity({rating.speed * direction.getX(), rating.speed * direction.getY()});
 
