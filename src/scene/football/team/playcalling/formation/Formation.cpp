@@ -45,9 +45,9 @@ Vector2D Formation::calculatePosition(const FormationSlot &slot, const FootballF
     //TODO make this scale with origin
     switch (slot.horizontal) {
         //Left side alignment
-        case HorizontalAlignment::LEFT_SIDELINE: y = -100; break;
-        case HorizontalAlignment::LEFT_NUMBERS: y = (fieldW / 4); break;
-        case HorizontalAlignment::LEFT_SLOT: y = (fieldW / 2); break;
+        case HorizontalAlignment::LEFT_SIDELINE: y = 2; break;
+        case HorizontalAlignment::LEFT_NUMBERS: y = -(fieldW / 4); break;
+        case HorizontalAlignment::LEFT_SLOT: y = -(fieldW / 2); break;
         //Right side alignments
         case HorizontalAlignment::RIGHT_SIDELINE: y = fieldW - 2; break;
         case HorizontalAlignment::RIGHT_NUMBERS: y = fieldW - (fieldW / 4); break;
@@ -61,6 +61,8 @@ Vector2D Formation::calculatePosition(const FormationSlot &slot, const FootballF
         case DepthAlignment::QB_GUN: x = -5; break;
         default: break;
     }
+
+    Logger::log("x: " + std::to_string(x) + " y: " + std::to_string(y));
 
 
     return Vector2D(x, y) + slot.offset + origin;

@@ -63,7 +63,7 @@ public:
 
         HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE);
-        std::cout << "[" << className << "]: ";
+        std::cout << "\n[" << className << "]: ";
 
         error(message);
     }

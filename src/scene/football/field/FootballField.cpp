@@ -29,6 +29,11 @@ FootballField::FootballField(EventBus &eventBus) : eventBus(eventBus), team1(eve
     }
     boundary.setRepeated(true);
 
+    if (!dashes.loadFromFile(prefix + "field_dashes_tile.png")) {
+        Logger::error(errorMessage, typeid(*this));
+    }
+    dashes.setRepeated(true);
+
     registerEvents(eventBus);
 
     football.isVisible(false);
@@ -81,6 +86,7 @@ void FootballField::tick(double dt) {
 void FootballField::render(double dt, sf::RenderWindow &window) {
     renderGrassLayer(dt, window);
     renderBoundariesLayer(dt, window);
+    renderHashesLayer(dt, window);
 
     getTeamOffense().render(dt, window);
     football.render(dt, window);
@@ -194,6 +200,26 @@ void FootballField::renderBoundariesLayer(double dt, sf::RenderWindow &window) {
         window.draw(vSprite);
     }
 }
+
+void FootballField::renderHashesLayer(double dt, sf::RenderWindow &window) const {
+    const double scaledX = FieldConstants::toPixels(this->x);
+    const double scaledY = FieldConstants::toPixels(this->y);
+
+    const double yardLineThickness = std::floor(std::max(FieldConstants::PIXEL_PER_YARD, 1));
+
+    const util::Rectangle hashLine = {scaledX, scaledY, FieldConstants::ENTIRE_LENGTH_OF_FIELD_PX, yardLineThickness};
+    sf::Sprite hashLineSprite = hashLine.getSpriteFromRectSize(dashes);
+
+    constexpr double yardsFromSideline = FieldConstants::YARDS_TO_HASHES_PX;
+
+    hashLineSprite.setPosition(sf::Vector2f(scaledX, scaledY + yardsFromSideline));
+    window.draw(hashLineSprite);
+
+    const double dy = scaledY + (FieldConstants::FIELD_WIDTH_PX - yardsFromSideline);
+    hashLineSprite.setPosition(sf::Vector2f(scaledX, dy));
+    window.draw(hashLineSprite);
+}
+
 
 
 

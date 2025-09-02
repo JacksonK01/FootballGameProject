@@ -50,6 +50,7 @@ private:
 
     sf::Texture grass;
     sf::Texture boundary;
+    sf::Texture dashes;
 
     void playCallingState(double dt);
 
@@ -63,7 +64,7 @@ private:
     void registerEvents(EventBus& eventBus);
 
     void renderGrassLayer(double dt, sf::RenderWindow& window);
-
     void renderBoundariesLayer(double dt, sf::RenderWindow& window);
+    void renderHashesLayer(double dt, sf::RenderWindow& window) const;
 };
 
